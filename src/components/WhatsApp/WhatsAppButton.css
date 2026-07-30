@@ -1,0 +1,22 @@
+.floating-whatsapp{
+    position:fixed;
+    right:25px;
+    bottom:35px;
+    z-index:9999;
+}
+
+.floating-whatsapp a{
+    width:58px;
+    height:58px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:#25D366;
+    text-decoration:none;
+}
+
+.floating-whatsapp a svg{
+    color:#fff;
+    font-size:28px;
+}

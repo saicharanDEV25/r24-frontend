@@ -1,0 +1,22 @@
+.floating-instagram{
+    position:fixed;
+    right:25px;
+    bottom:105px;
+    z-index:9999;
+}
+
+.floating-instagram a{
+    width:58px;
+    height:58px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF,#515BD4);
+    text-decoration:none;
+}
+
+.floating-instagram a svg{
+    color:#fff;
+    font-size:28px;
+}
