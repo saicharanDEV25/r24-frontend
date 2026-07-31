@@ -111,7 +111,7 @@ function Products() {
             >
 
               <img
-                src={`http://localhost:8080/uploads/${item.imageUrl}`}
+                src={`https://r24-backend.onrender.com/uploads/${item.imageUrl}`}
                 alt={item.name}
                 onError={(e) => {
                   e.target.src =
@@ -166,7 +166,7 @@ function Products() {
             </button>
 
             <img
-              src={`http://localhost:8080/uploads/${selectedProduct.imageUrl}`}
+             src={`https://r24-backend.onrender.com/uploads/${selectedProduct.imageUrl}`}
               alt={selectedProduct.name}
               onError={(e) => {
                 e.target.src =
