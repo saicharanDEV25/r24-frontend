@@ -37,33 +37,27 @@ function Gallery() {
             </div>
 
             <div className="images-wrapper">
-              {/* BEFORE */}
               <div className="image-box before">
-
                 {item.beforeImageUrl ? (
                   <img
-  src={`https://r24-backend.onrender.com/uploads/${item.beforeImageUrl}`}
-  alt={`${item.title} - Before`}
-/>
+                    src={item.beforeImageUrl}
+                    alt={`${item.title} - Before`}
+                  />
                 ) : (
                   <div className="placeholder">Before Image</div>
                 )}
               </div>
 
-              {/* ARROW */}
               <div className="arrow">
                 <FaArrowRight />
               </div>
 
-              {/* AFTER */}
               <div className="image-box after">
-               
-
                 {item.afterImageUrl ? (
-                 <img
-  src={`https://r24-backend.onrender.com/uploads/${item.afterImageUrl}`}
-  alt={`${item.title} - After`}
-/>
+                  <img
+                    src={item.afterImageUrl}
+                    alt={`${item.title} - After`}
+                  />
                 ) : (
                   <div className="placeholder">After Image</div>
                 )}
