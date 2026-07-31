@@ -42,9 +42,9 @@ function Gallery() {
 
                 {item.beforeImageUrl ? (
                   <img
-                    src={`http://localhost:8080/uploads/${item.beforeImageUrl}`}
-                    alt={`${item.title} - Before`}
-                  />
+  src={`https://r24-backend.onrender.com/uploads/${item.beforeImageUrl}`}
+  alt={`${item.title} - Before`}
+/>
                 ) : (
                   <div className="placeholder">Before Image</div>
                 )}
@@ -60,10 +60,10 @@ function Gallery() {
                
 
                 {item.afterImageUrl ? (
-                  <img
-                    src={`http://localhost:8080/uploads/${item.afterImageUrl}`}
-                    alt={`${item.title} - After`}
-                  />
+                 <img
+  src={`https://r24-backend.onrender.com/uploads/${item.afterImageUrl}`}
+  alt={`${item.title} - After`}
+/>
                 ) : (
                   <div className="placeholder">After Image</div>
                 )}
