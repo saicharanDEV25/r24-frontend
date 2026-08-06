@@ -60,6 +60,14 @@
     line-height:1.7;
 }
 
+.footer-contact a{
+    transition:.3s;
+}
+
+.footer-contact a:hover{
+    color:#FFD000;
+}
+
 .footer-social-icons{
     display:flex;
     gap:15px;

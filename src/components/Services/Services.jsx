@@ -1,4 +1,5 @@
 import "./Services.css";
+import { useNavigate } from "react-router-dom";
 import {
   FaTools,
   FaPaintBrush,
@@ -7,6 +8,24 @@ import {
   FaCog,
 } from "react-icons/fa";
 import { GiCarWheel } from "react-icons/gi";
+
+const servicePages = {
+  "Bike Service": "/bike-service",
+  "Custom Painting": "/custom-painting",
+  "Bike Wrapping": "/bike-wrapping",
+  "Bike Detailing": "/bike-detailing",
+  "Tyres & Wheels": "/tyres-wheels",
+  Accessories: "/accessories",
+};
+
+const servicePageLinkLabels = {
+  "Bike Service": "View Services & Pricing →",
+  "Custom Painting": "Design Your Bike →",
+  "Bike Wrapping": "Explore Wrapping Types →",
+  "Bike Detailing": "View Detailing Options →",
+  "Tyres & Wheels": "Find Your Tyre →",
+  Accessories: "Browse Accessories →",
+};
 
 const services = [
   {
@@ -42,28 +61,56 @@ const services = [
 ];
 
 function Services() {
+  const navigate = useNavigate();
+
   return (
-    <section className="services">
+    <section className="services" id="services">
 
       <h2>Our Premium Services</h2>
 
       <div className="service-grid">
 
-        {services.map((service, index) => (
+        {services.map((service, index) => {
+          const targetPage = servicePages[service.title];
+          const goToPage = targetPage
+            ? () => navigate(targetPage)
+            : undefined;
 
-          <div className="service-card" key={index}>
+          return (
+            <div
+              className="service-card"
+              key={index}
+              onClick={goToPage}
+              role={targetPage ? "button" : undefined}
+              tabIndex={targetPage ? 0 : undefined}
+              onKeyDown={
+                targetPage
+                  ? (e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        goToPage();
+                      }
+                    }
+                  : undefined
+              }
+            >
 
-            <div className="service-icon">
-              {service.icon}
+              <div className="service-icon">
+                {service.icon}
+              </div>
+
+              <h3>{service.title}</h3>
+
+              <p>{service.desc}</p>
+
+              {targetPage && (
+                <span className="service-card-link">
+                  {servicePageLinkLabels[service.title]}
+                </span>
+              )}
+
             </div>
-
-            <h3>{service.title}</h3>
-
-            <p>{service.desc}</p>
-
-          </div>
-
-        ))}
+          );
+        })}
 
       </div>
 

@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 import api from "../../services/api";
 import "./Product.css";
+import OptimizedImage from "../../components/common/OptimizedImage/OptimizedImage";
+import { useCustomerAuth } from "../../context/CustomerAuthContext";
+import LoginModal from "../../components/Auth/LoginModal";
 
 function Products() {
 
@@ -11,6 +15,18 @@ function Products() {
   const [category, setCategory] = useState("All");
 
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [showLogin, setShowLogin] = useState(false);
+
+  const { customer, isFavorite, toggleFavorite } = useCustomerAuth();
+
+  const handleFavoriteClick = (e, item) => {
+    e.stopPropagation();
+    if (!customer) {
+      setShowLogin(true);
+      return;
+    }
+    toggleFavorite(item);
+  };
 
   useEffect(() => {
     loadProducts();
@@ -110,14 +126,32 @@ function Products() {
               onClick={() => setSelectedProduct(item)}
             >
 
-              <img
-                 src={item.imageUrl}
-                alt={item.name}
-                onError={(e) => {
-                  e.target.src =
-                    "https://placehold.co/400x400?text=No+Image";
-                }}
-              />
+              <div className="product-image-wrap">
+                <OptimizedImage
+                  src={item.imageUrl}
+                  width={400}
+                  alt={item.name}
+                  fallbackSrc="https://placehold.co/400x400?text=No+Image"
+                />
+
+                <span
+                  className={
+                    item.stock > 0
+                      ? "stock-badge in-stock"
+                      : "stock-badge out-of-stock"
+                  }
+                >
+                  {item.stock > 0 ? "In Stock" : "Out of Stock"}
+                </span>
+
+                <button
+                  className="favorite-btn"
+                  onClick={(e) => handleFavoriteClick(e, item)}
+                  aria-label="Save to favorites"
+                >
+                  {isFavorite(item.id) ? <FaHeart /> : <FaRegHeart />}
+                </button>
+              </div>
 
               <div className="product-content">
 
@@ -165,19 +199,38 @@ function Products() {
               ✕
             </button>
 
-            <img
-              src={selectedProduct.imageUrl}
-              alt={selectedProduct.name}
-              onError={(e) => {
-                e.target.src =
-                  "https://placehold.co/500x500?text=No+Image";
-              }}
-            />
+            <div className="product-image-wrap">
+              <OptimizedImage
+                src={selectedProduct.imageUrl}
+                width={700}
+                alt={selectedProduct.name}
+                eager
+                fallbackSrc="https://placehold.co/500x500?text=No+Image"
+              />
+
+              <button
+                className="favorite-btn"
+                onClick={(e) => handleFavoriteClick(e, selectedProduct)}
+                aria-label="Save to favorites"
+              >
+                {isFavorite(selectedProduct.id) ? <FaHeart /> : <FaRegHeart />}
+              </button>
+            </div>
 
             <div className="popup-content">
 
               <span className="popup-category">
                 {selectedProduct.category?.name}
+              </span>
+
+              <span
+                className={
+                  selectedProduct.stock > 0
+                    ? "stock-badge in-stock popup-stock-badge"
+                    : "stock-badge out-of-stock popup-stock-badge"
+                }
+              >
+                {selectedProduct.stock > 0 ? "In Stock" : "Out of Stock"}
               </span>
 
               <h2>{selectedProduct.name}</h2>
@@ -209,6 +262,8 @@ function Products() {
         </div>
 
       )}
+
+      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
 
     </>
 

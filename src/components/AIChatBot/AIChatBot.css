@@ -49,7 +49,7 @@ input{
 
 .ai-button{
     position:fixed;
-    right:20px;
+    right:25px;
     bottom:175px;          /* raised so it sits cleanly above IG + WA */
 
     width:58px;
@@ -59,20 +59,51 @@ input{
     border-radius:50%;
 
     background:linear-gradient(135deg,#FFD000,#F7B500);
+    box-shadow:0 10px 25px rgba(255,208,0,.35);
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    font-size:28px;
+    font-size:26px;
+    color:#111;
 
     z-index:100000;
+    transition:.3s ease;
 }
 
 .ai-button:hover{
 
     transform:translateY(-3px) scale(1.05);
+    box-shadow:0 14px 32px rgba(255,208,0,.45);
 
+}
+
+.ai-button-pulse{
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    border:2px solid rgba(255,208,0,.6);
+    animation:ai-pulse 2.2s ease-out infinite;
+    pointer-events:none;
+}
+
+@keyframes ai-pulse{
+    0%{
+        transform:scale(1);
+        opacity:.6;
+    }
+    100%{
+        transform:scale(1.6);
+        opacity:0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce){
+    .ai-button-pulse{
+        animation:none;
+        display:none;
+    }
 }
 
 
@@ -163,7 +194,7 @@ input{
 
     width:390px;
 
-    height:690px;
+    height:min(690px, 75vh);
 
     background:#F8F8F8;
 
@@ -778,7 +809,7 @@ input{
     .chat-container{
 
         width:400px;
-        height:720px;
+        height:min(720px, 75vh);
     }
 
 }

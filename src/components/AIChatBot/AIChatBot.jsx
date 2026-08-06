@@ -1,7 +1,37 @@
 import { useState, useEffect, useRef } from "react";
+import { FaRobot } from "react-icons/fa";
 import "./AIChatBot.css";
+import { useCustomerAuth } from "../../context/CustomerAuthContext";
+import api from "../../services/api";
+
+const bikes = [
+  "125 Duke",
+  "200 Duke",
+  "250 Duke",
+  "390 Duke",
+  "RC 200",
+  "RC 390",
+  "250 Adventure",
+  "390 Adventure",
+  "390 Adventure X",
+  "390 Enduro R",
+  "790 Duke",
+  "890 Duke R",
+  "1290 Super Duke R",
+];
+
+const bikeServices = [
+  "Regular Maintenance",
+  "Engine Repair",
+  "Brake Service",
+  "Chain Service",
+  "Oil Change",
+  "General Checkup",
+];
 
 function AIChatBot({ chatOpen, setChatOpen }) {
+
+  const { customer } = useCustomerAuth();
 
   const [open, setOpen] = useState(false);
 
@@ -183,6 +213,18 @@ function AIChatBot({ chatOpen, setChatOpen }) {
 
     addUser(selectedProduct);
 
+    setStep("done");
+
+    api.post("/chat-leads", {
+      name,
+      phoneNumber: phone,
+      bikeModel: bike,
+      category,
+      productOrService: selectedProduct,
+    }).catch((error) => {
+      console.error("Error saving chat lead:", error);
+    });
+
     addBot(
 `✅ ${selectedProduct}
 
@@ -265,7 +307,8 @@ className="ai-button"
 onClick={openChat}
 >
 
-🤖
+<FaRobot />
+<span className="ai-button-pulse"></span>
 
 </button>
 
@@ -285,7 +328,9 @@ open && (
 
             <h3>R24 Automotive AI</h3>
 
-            <span>Online</span>
+            <span>
+              {customer ? `🔒 Logged in as ${customer.name || "Rider"}` : "Online"}
+            </span>
 
           </div>
 
@@ -391,33 +436,11 @@ open && (
 
           <h4>Choose Your KTM Bike</h4>
 
-          <button onClick={()=>chooseBike("Duke 125")}>
-            Duke 125
-          </button>
-
-          <button onClick={()=>chooseBike("Duke 200")}>
-            Duke 200
-          </button>
-
-          <button onClick={()=>chooseBike("Duke 250")}>
-            Duke 250
-          </button>
-
-          <button onClick={()=>chooseBike("Duke 390")}>
-            Duke 390
-          </button>
-
-          <button onClick={()=>chooseBike("RC 200")}>
-            RC 200
-          </button>
-
-          <button onClick={()=>chooseBike("RC 390")}>
-            RC 390
-          </button>
-
-          <button onClick={()=>chooseBike("Adventure 390")}>
-            Adventure 390
-          </button>
+          {bikes.map((bikeName) => (
+            <button key={bikeName} onClick={()=>chooseBike(bikeName)}>
+              🏍 {bikeName}
+            </button>
+          ))}
 
         </div>
         
@@ -531,21 +554,11 @@ open && (
 
           <h4>Select Service</h4>
 
-          <button onClick={()=>showProduct("General Service")}>
-            General Service
-          </button>
-
-          <button onClick={()=>showProduct("Engine Oil Change")}>
-            Engine Oil Change
-          </button>
-
-          <button onClick={()=>showProduct("Bike Wash")}>
-            Bike Wash
-          </button>
-
-          <button onClick={()=>showProduct("Performance Checkup")}>
-            Performance Checkup
-          </button>
+          {bikeServices.map((service) => (
+            <button key={service} onClick={()=>showProduct(service)}>
+              🛠 {service}
+            </button>
+          ))}
 
         </div>
 

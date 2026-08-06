@@ -11,6 +11,11 @@
     object-fit:cover;
 }
 
+img.hero-image{
+    filter:blur(2px);
+    transform:scale(1.05);
+}
+
 .hero-overlay{
     position:absolute;
     inset:0;

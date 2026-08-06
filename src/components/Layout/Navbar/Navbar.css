@@ -51,16 +51,38 @@
 }
 
 .book-btn{
-    background:#FFD000;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:linear-gradient(135deg,#FFD000,#F7B500);
     color:#000 !important;
-    padding:12px 24px;
-    border-radius:8px;
+    padding:12px 26px;
+    border-radius:30px;
     font-weight:700;
+    box-shadow:0 8px 20px rgba(255,208,0,.25);
+    position:relative;
+    overflow:hidden;
     transition:.3s;
 }
 
+.book-btn::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:100%;
+    height:100%;
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,.55),transparent);
+    transition:.5s;
+}
+
+.book-btn:hover::before{
+    left:100%;
+}
+
 .book-btn:hover{
-    transform:translateY(-2px);
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(255,208,0,.4);
 }
 
 .menu-icon{
@@ -68,6 +90,130 @@
     color:#fff;
     font-size:30px;
     cursor:pointer;
+}
+
+/* ---------- Login / Profile ---------- */
+
+.login-btn{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:transparent;
+    border:2px solid #FFD000;
+    color:#FFD000;
+    padding:10px 20px;
+    border-radius:8px;
+    font-weight:700;
+    font-size:15px;
+    transition:.3s;
+}
+
+.login-btn:hover{
+    background:#FFD000;
+    color:#111;
+    transform:translateY(-2px);
+}
+
+.profile-menu{
+    position:relative;
+}
+
+.profile-avatar-btn{
+    width:42px;
+    height:42px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#FFD000,#F7B500);
+    border:2px solid rgba(255,208,0,.4);
+    border-radius:50%;
+    color:#111;
+    font-size:20px;
+    transition:.3s;
+}
+
+.profile-avatar-btn:hover{
+    transform:scale(1.08);
+    box-shadow:0 8px 20px rgba(255,208,0,.35);
+}
+
+.profile-avatar-initials{
+    font-size:16px;
+    font-weight:800;
+}
+
+.profile-dropdown{
+    position:absolute;
+    top:calc(100% + 12px);
+    right:0;
+    width:220px;
+    background:#151515;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:14px;
+    padding:10px;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    box-shadow:0 20px 45px rgba(0,0,0,.45);
+    animation:profile-dropdown-in .2s ease;
+    z-index:1002;
+}
+
+.profile-dropdown-header{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    padding:10px 12px 12px;
+    margin-bottom:4px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.profile-dropdown-header strong{
+    color:#fff;
+    font-size:14px;
+}
+
+.profile-dropdown-header span{
+    color:#999;
+    font-size:12px;
+}
+
+@keyframes profile-dropdown-in{
+    from{ opacity:0; transform:translateY(-8px); }
+    to{ opacity:1; transform:translateY(0); }
+}
+
+.profile-dropdown button{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:none;
+    border:none;
+    color:#fff;
+    text-align:left;
+    padding:11px 12px;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:500;
+    transition:.2s;
+}
+
+.profile-dropdown button:hover{
+    background:rgba(255,208,0,.1);
+    color:#FFD000;
+}
+
+.profile-dropdown .logout-item{
+    color:#e74c3c;
+    border-top:1px solid rgba(255,255,255,.08);
+    margin-top:4px;
+    padding-top:12px;
+}
+
+.profile-dropdown .logout-item:hover{
+    background:rgba(231,76,60,.1);
+    color:#e74c3c;
 }
 
 /* ---------- Tablet ---------- */
@@ -108,7 +254,25 @@
 
     .book-btn{
         width:100%;
-        text-align:center;
+        justify-content:center;
+    }
+
+    .login-btn{
+        width:100%;
+        justify-content:center;
+    }
+
+    .profile-menu{
+        display:flex;
+        justify-content:center;
+        width:100%;
+    }
+
+    .profile-dropdown{
+        position:static;
+        width:100%;
+        margin-top:8px;
+        box-shadow:none;
     }
 
     .menu-icon{

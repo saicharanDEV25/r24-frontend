@@ -15,10 +15,10 @@ function Home() {
 <>
   <Navbar />
   <Hero />
- 
+
   <Services />
   <WhyChoose />
-  
+
   <Gallery />
   <Reviews />
   <Contact />

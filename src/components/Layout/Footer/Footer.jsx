@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   FaInstagram,
   FaWhatsapp,
@@ -24,11 +25,11 @@ function Footer() {
           <h3>Quick Links</h3>
 
           <ul>
-            <li><a href="#home">Home</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#products">Accessories</a></li>
-            <li><a href="#gallery">Gallery</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><Link to="/">Home</Link></li>
+            <li><a href="/#services">Services</a></li>
+            <li><Link to="/accessories">Accessories</Link></li>
+            <li><a href="/#gallery">Gallery</a></li>
+            <li><Link to="/contact">Contact</Link></li>
           </ul>
         </div>
 
@@ -36,12 +37,19 @@ function Footer() {
           <h3>Contact</h3>
 
           <p>
-            <FaPhoneAlt /> &nbsp;+91 83095 60622
+            <FaPhoneAlt /> &nbsp;
+            <a href="tel:+918309560622">+91 83095 60622</a>
           </p>
 
           <p>
-            <FaMapMarkerAlt /> &nbsp;R24 Automotive,
-            Vardhannapeta, Warangal, Telangana
+            <FaMapMarkerAlt /> &nbsp;
+            <a
+              href="https://www.google.com/maps?q=R24+Automotive,+Vardhannapeta,+Warangal,+Telangana"
+              target="_blank"
+              rel="noreferrer"
+            >
+              R24 Automotive, Vardhannapeta, Warangal, Telangana
+            </a>
           </p>
         </div>
 

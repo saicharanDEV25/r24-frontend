@@ -1,16 +1,20 @@
-import { motion } from "framer-motion";
+ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import "./Hero.css";
+import OptimizedImage from "../common/OptimizedImage/OptimizedImage";
 
 function Hero() {
   return (
     <section className="hero">
       <div className="hero-overlay"></div>
 
-      <img
+      <OptimizedImage
         src="/images/hero.jpg"
+        webpSrc="/images/hero.webp"
         alt="R24 Automotive"
         className="hero-image"
+        wrapperClassName="hero-image"
+        eager
       />
 
       <div className="container hero-content">
@@ -39,14 +43,9 @@ function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
         >
-          <a
-            href="https://wa.me/918309560622?text=Hello%20R24%20Automotive%20👋%20I%20want%20to%20book%20a%20service."
-            target="_blank"
-            rel="noreferrer"
-            className="primary-btn"
-          >
+          <Link to="/bike-service" className="primary-btn">
             Book Service
-          </a>
+          </Link>
 
           <Link to="/products" className="secondary-btn">
             Explore Products
