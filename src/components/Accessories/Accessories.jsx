@@ -46,7 +46,7 @@ function Accessories() {
   const loadProducts = async () => {
     try {
       const res = await api.get("/products");
-      setProducts(res.data);
+      setProducts(res.data.filter((item) => item.active !== false));
     } catch (error) {
       console.log(error);
     }

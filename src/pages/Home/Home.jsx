@@ -1,5 +1,6 @@
 import Navbar from "../../components/Layout/Navbar/Navbar";
 import Hero from "../../components/Hero/Hero";
+import EngineExperience from "../../components/EngineExperience/EngineExperience";
 import Services from "../../components/Services/Services";
 import WhyChoose from "../../components/WhyChoose/WhyChoose";
 
@@ -15,6 +16,7 @@ function Home() {
 <>
   <Navbar />
   <Hero />
+  <EngineExperience />
 
   <Services />
   <WhyChoose />

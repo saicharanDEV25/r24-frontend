@@ -1,0 +1,15 @@
+export const KTM_BIKES = [
+  "125 Duke",
+  "200 Duke",
+  "250 Duke",
+  "390 Duke",
+  "RC 200",
+  "RC 390",
+  "250 Adventure",
+  "390 Adventure",
+  "390 Adventure X",
+  "390 Enduro R",
+  "790 Duke",
+  "890 Duke R",
+  "1290 Super Duke R",
+];

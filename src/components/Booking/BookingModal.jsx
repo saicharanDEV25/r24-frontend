@@ -2,22 +2,7 @@ import { useState } from "react";
 import { FaTimes, FaCalendarCheck } from "react-icons/fa";
 import "./BookingModal.css";
 import api from "../../services/api";
-
-const bikes = [
-  "125 Duke",
-  "200 Duke",
-  "250 Duke",
-  "390 Duke",
-  "RC 200",
-  "RC 390",
-  "250 Adventure",
-  "390 Adventure",
-  "390 Adventure X",
-  "390 Enduro R",
-  "790 Duke",
-  "890 Duke R",
-  "1290 Super Duke R",
-];
+import { KTM_BIKES as bikes } from "../../constants/bikes";
 
 function BookingModal({ serviceType, price, onClose }) {
   const [name, setName] = useState("");

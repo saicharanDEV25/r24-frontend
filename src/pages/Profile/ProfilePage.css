@@ -320,6 +320,169 @@
   transform: translateY(-3px);
 }
 
+/* ---------- My Garage ---------- */
+
+.profile-garage {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.garage-edit-form {
+  background: #151515;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.garage-edit-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #ccc;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.garage-edit-form select,
+.garage-edit-form input {
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 13px 16px;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  transition: 0.25s;
+}
+
+.garage-edit-form select:focus,
+.garage-edit-form input:focus {
+  border-color: #ffd000;
+}
+
+.garage-edit-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.garage-edit-actions button {
+  flex: 1;
+  padding: 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  transition: 0.3s;
+}
+
+.garage-edit-actions button[type="submit"] {
+  background: #ffd000;
+  color: #111;
+}
+
+.garage-edit-actions button[type="submit"]:hover {
+  background: #fff;
+  transform: translateY(-2px);
+}
+
+.garage-cancel-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ccc;
+}
+
+.garage-cancel-btn:hover {
+  border-color: #fff;
+  color: #fff;
+}
+
+.garage-card {
+  background: #151515;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 32px;
+}
+
+.garage-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 26px;
+}
+
+.garage-card-tag {
+  display: inline-block;
+  color: #ffd000;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  font-size: 11px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.garage-card-header h3 {
+  color: #fff;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.garage-edit-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 208, 0, 0.4);
+  color: #ffd000;
+  padding: 8px 18px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.garage-edit-btn:hover {
+  background: #ffd000;
+  color: #111;
+}
+
+.garage-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.garage-stat {
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+.garage-stat-link {
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.garage-stat-link:hover {
+  border-color: rgba(255, 208, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+.garage-stat-label {
+  color: #999;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.garage-stat-value {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 768px) {

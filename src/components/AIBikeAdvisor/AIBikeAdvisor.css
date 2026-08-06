@@ -1,0 +1,181 @@
+.advisor {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.advisor-heading {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.advisor-tag {
+    display: inline-block;
+    color: #FFD000;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    font-size: 12px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.advisor-heading h3 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 800;
+    color: #fff;
+}
+
+.advisor-heading p {
+    color: #aaa;
+    margin-top: 8px;
+    font-size: 14.5px;
+}
+
+.advisor-symptom-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.advisor-symptom-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #151515;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 18px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #eee;
+    text-align: left;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.advisor-symptom-card:hover {
+    border-color: rgba(255, 208, 0, 0.4);
+    transform: translateY(-4px);
+}
+
+.advisor-symptom-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 10px;
+    background: rgba(255, 208, 0, 0.12);
+    color: #FFD000;
+    font-size: 16px;
+}
+
+.advisor-result {
+    background: #151515;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 30px;
+}
+
+.advisor-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 18px;
+}
+
+.advisor-back:hover {
+    color: #fff;
+}
+
+.advisor-result h4 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 22px;
+}
+
+.advisor-flow {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.advisor-step {
+    background: #0f0f0f;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 16px 20px;
+}
+
+.advisor-step-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #FFD000;
+    margin-bottom: 8px;
+}
+
+.advisor-step ul {
+    margin: 0;
+    padding-left: 18px;
+    color: #d5d5d5;
+}
+
+.advisor-step ul li {
+    margin-bottom: 4px;
+    font-size: 14.5px;
+}
+
+.advisor-step p {
+    font-size: 15px;
+    font-weight: 600;
+    color: #eee;
+    margin: 0;
+}
+
+.advisor-step-arrow {
+    text-align: center;
+    color: #444;
+    font-size: 18px;
+    padding: 6px 0;
+}
+
+.advisor-book-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #FFD000;
+    color: #111;
+    border: none;
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.advisor-book-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(255, 208, 0, 0.25);
+}
+
+@media (max-width: 576px) {
+    .advisor-result {
+        padding: 20px;
+    }
+}

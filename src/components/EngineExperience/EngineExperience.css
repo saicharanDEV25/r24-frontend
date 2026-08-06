@@ -1,0 +1,200 @@
+.engine-exp {
+    background: #0b0b0d;
+    padding: 80px 0;
+}
+
+.engine-exp-heading {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.engine-exp-tag {
+    display: inline-block;
+    color: #FFD000;
+    font-weight: 700;
+    letter-spacing: 2px;
+    font-size: 12px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.engine-exp-heading h2 {
+    color: #fff;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+}
+
+.engine-exp-heading h2 span {
+    color: #FFD000;
+}
+
+.engine-exp-heading p {
+    color: #999;
+    margin-top: 10px;
+    font-size: 15px;
+}
+
+.engine-exp-stage {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 50px;
+    align-items: center;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* ---------- Visual side ---------- */
+
+.engine-exp-visual {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+}
+
+.engine-bars {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    z-index: 0;
+}
+
+.engine-bar {
+    width: 6px;
+    min-height: 6px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #FFD000, #a06f00);
+    opacity: 0.55;
+    transition: height 0.08s ease-out;
+}
+
+.engine-btn {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    background: #111;
+    border: 3px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.engine-btn svg {
+    font-size: 32px;
+    color: #999;
+    transition: 0.3s;
+}
+
+.engine-btn:hover {
+    border-color: rgba(255, 208, 0, 0.5);
+}
+
+.engine-btn.running {
+    border-color: #FFD000;
+    box-shadow: 0 0 40px rgba(255, 208, 0, 0.35);
+    animation: engine-pulse-ring 1.4s ease-in-out infinite;
+}
+
+.engine-btn.running svg {
+    color: #FFD000;
+}
+
+@keyframes engine-pulse-ring {
+    0%, 100% { box-shadow: 0 0 30px rgba(255, 208, 0, 0.25); }
+    50% { box-shadow: 0 0 50px rgba(255, 208, 0, 0.5); }
+}
+
+.engine-audio-warning {
+    position: absolute;
+    bottom: -10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #e74c3c;
+    font-size: 13px;
+}
+
+/* ---------- Config side ---------- */
+
+.engine-exp-config {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.engine-config-group h4 {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+}
+
+.engine-pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.engine-pill {
+    background: #151515;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ccc;
+    padding: 11px 18px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.engine-pill:hover {
+    border-color: rgba(255, 208, 0, 0.4);
+}
+
+.engine-pill.active {
+    background: #FFD000;
+    color: #111;
+    border-color: #FFD000;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+    .engine-exp-stage {
+        grid-template-columns: 1fr;
+    }
+
+    .engine-exp-visual {
+        min-height: 280px;
+    }
+}
+
+@media (max-width: 576px) {
+    .engine-exp {
+        padding: 60px 0;
+    }
+
+    .engine-btn {
+        width: 140px;
+        height: 140px;
+        font-size: 11px;
+    }
+}

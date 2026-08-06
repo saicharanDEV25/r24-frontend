@@ -21,16 +21,26 @@ function getOrCreateVisitorId() {
   return visitorId;
 }
 
+const VISIT_SESSION_GAP_MS = 30 * 60 * 1000; // 30 minutes
+
+function shouldTrackNewVisit() {
+  const lastVisitAt = Number(localStorage.getItem("lastVisitAt") || 0);
+  return Date.now() - lastVisitAt > VISIT_SESSION_GAP_MS;
+}
+
 function App() {
 
   const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
+    if (!shouldTrackNewVisit()) return;
+
     api
       .post("/analytics/visit", {
         visitorId: getOrCreateVisitorId(),
         path: window.location.pathname,
       })
+      .then(() => localStorage.setItem("lastVisitAt", String(Date.now())))
       .catch((error) => console.error("Error tracking visit:", error));
   }, []);
 

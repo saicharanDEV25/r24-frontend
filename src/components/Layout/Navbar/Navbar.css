@@ -242,6 +242,8 @@
         padding:40px 20px;
         transition:.35s ease;
         box-shadow:-10px 0 25px rgba(0,0,0,.4);
+        overflow-y:auto;
+        -webkit-overflow-scrolling:touch;
     }
 
     .nav-links.active{

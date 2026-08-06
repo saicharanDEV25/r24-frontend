@@ -5,6 +5,8 @@ import "./Product.css";
 import OptimizedImage from "../../components/common/OptimizedImage/OptimizedImage";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
 import LoginModal from "../../components/Auth/LoginModal";
+import Navbar from "../../components/Layout/Navbar/Navbar";
+import Footer from "../../components/Layout/Footer/Footer";
 
 function Products() {
 
@@ -36,7 +38,7 @@ function Products() {
   const loadProducts = async () => {
     try {
       const response = await api.get("/products");
-      setProducts(response.data);
+      setProducts(response.data.filter((item) => item.active !== false));
     } catch (error) {
       console.log(error);
     }
@@ -69,6 +71,7 @@ function Products() {
   return (
 
     <>
+      <Navbar />
           <section className="products-page">
 
         <div className="products-header">
@@ -264,6 +267,8 @@ function Products() {
       )}
 
       {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
+
+      <Footer />
 
     </>
 
