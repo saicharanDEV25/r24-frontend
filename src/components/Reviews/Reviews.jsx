@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./Reviews.css";
-import { FaStar, FaRegStar } from "react-icons/fa";
+import { FaStar, FaRegStar, FaTimes } from "react-icons/fa";
 import api from "../../services/api";
 
 function Reviews() {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedReview, setSelectedReview] = useState(null);
 
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
@@ -15,9 +16,101 @@ function Reviews() {
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState(null);
 
+  const scrollRef = useRef(null);
+  const hoveringRef = useRef(false);
+  const draggingRef = useRef(false);
+  const touchActiveRef = useRef(false);
+  const didDragRef = useRef(false);
+  const dragStartRef = useRef({ x: 0, scrollLeft: 0 });
+  const touchResumeTimeout = useRef(null);
+
   useEffect(() => {
     loadReviews();
   }, []);
+
+  // Same auto-scroll + drag/swipe behavior as the Gallery before/after
+  // marquee — pauses on hover/drag/touch, normalizes scrollLeft each frame
+  // so the duplicated card list loops seamlessly.
+  useEffect(() => {
+    const track = scrollRef.current;
+    if (!track || reviews.length === 0) return;
+
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    const speed = reduceMotion ? 0 : 0.6;
+
+    let rafId;
+    const step = () => {
+      if (
+        !hoveringRef.current &&
+        !draggingRef.current &&
+        !touchActiveRef.current
+      ) {
+        track.scrollLeft += speed;
+      }
+
+      const half = track.scrollWidth / 2;
+      if (half > 0) {
+        if (track.scrollLeft >= half) track.scrollLeft -= half;
+        else if (track.scrollLeft < 0) track.scrollLeft += half;
+      }
+
+      rafId = requestAnimationFrame(step);
+    };
+    rafId = requestAnimationFrame(step);
+
+    return () => cancelAnimationFrame(rafId);
+  }, [reviews]);
+
+  const handlePointerDown = (e) => {
+    didDragRef.current = false;
+    if (e.pointerType === "mouse") {
+      draggingRef.current = true;
+      dragStartRef.current = {
+        x: e.clientX,
+        scrollLeft: scrollRef.current.scrollLeft,
+      };
+    } else {
+      touchActiveRef.current = true;
+      if (touchResumeTimeout.current) clearTimeout(touchResumeTimeout.current);
+    }
+  };
+
+  const handlePointerMove = (e) => {
+    if (!draggingRef.current) return;
+    const dx = e.clientX - dragStartRef.current.x;
+
+    if (Math.abs(dx) > 5 && !didDragRef.current) {
+      didDragRef.current = true;
+      // Only capture once we know this is a real drag, not a click —
+      // capturing on every mousedown makes the browser route the click
+      // event to this container instead of whatever's underneath.
+      e.currentTarget.setPointerCapture(e.pointerId);
+    }
+
+    if (didDragRef.current) {
+      e.preventDefault();
+      scrollRef.current.scrollLeft = dragStartRef.current.scrollLeft - dx;
+    }
+  };
+
+  const handlePointerEnd = (e) => {
+    draggingRef.current = false;
+    if (e?.pointerType === "mouse" && e.currentTarget.hasPointerCapture?.(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+    if (e?.pointerType && e.pointerType !== "mouse") {
+      touchResumeTimeout.current = setTimeout(() => {
+        touchActiveRef.current = false;
+      }, 800);
+    }
+  };
+
+  const openReview = (item) => {
+    if (didDragRef.current) return;
+    setSelectedReview(item);
+  };
 
   const loadReviews = async () => {
     try {
@@ -147,10 +240,23 @@ function Reviews() {
       )}
 
       {reviews.length > 0 && (
-        <div className="reviews-marquee">
+        <div
+          className="reviews-marquee"
+          ref={scrollRef}
+          onMouseEnter={() => (hoveringRef.current = true)}
+          onMouseLeave={() => (hoveringRef.current = false)}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerEnd}
+          onPointerCancel={handlePointerEnd}
+        >
           <div className="reviews-track">
             {[...reviews, ...reviews].map((item, index) => (
-              <div className="review-card" key={`${item.id}-${index}`}>
+              <div
+                className="review-card"
+                key={`${item.id}-${index}`}
+                onClick={() => openReview(item)}
+              >
                 <div className="stars">
                   {[1, 2, 3, 4, 5].map((star) =>
                     star <= item.rating ? (
@@ -166,6 +272,36 @@ function Reviews() {
                 <h3>{item.name}</h3>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {selectedReview && (
+        <div
+          className="review-popup-overlay"
+          onClick={() => setSelectedReview(null)}
+        >
+          <div className="review-popup" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="review-popup-close"
+              onClick={() => setSelectedReview(null)}
+            >
+              <FaTimes />
+            </button>
+
+            <div className="review-popup-stars">
+              {[1, 2, 3, 4, 5].map((star) =>
+                star <= selectedReview.rating ? (
+                  <FaStar key={star} />
+                ) : (
+                  <FaRegStar key={star} />
+                )
+              )}
+            </div>
+
+            <p className="review-popup-text">"{selectedReview.message}"</p>
+
+            <h3 className="review-popup-name">{selectedReview.name}</h3>
           </div>
         </div>
       )}

@@ -121,6 +121,8 @@ function Products() {
     })
     .sort((a, b) => {
       if (sortBy === "nameAZ") return (a.name || "").localeCompare(b.name || "");
+      if (sortBy === "newest") return (b.id || 0) - (a.id || 0);
+      if (sortBy === "oldest") return (a.id || 0) - (b.id || 0);
       return 0;
     });
 
@@ -190,6 +192,8 @@ function Products() {
           >
             <option value="default">Sort: Default</option>
             <option value="nameAZ">Name: A-Z</option>
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
           </select>
 
         </div>

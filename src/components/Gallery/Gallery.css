@@ -55,34 +55,37 @@
   margin: 0 auto;
 }
 
-/* ---------- Looping marquee ---------- */
+/* ---------- Looping marquee (auto-scrolls, but the user can also drag/swipe it) ---------- */
 .before-after-marquee {
   width: 100%;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  cursor: grab;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.before-after-marquee::-webkit-scrollbar {
+  display: none;
+}
+
+.before-after-marquee:active {
+  cursor: grabbing;
 }
 
 .before-after-track {
   display: flex;
   gap: 36px;
   width: max-content;
-  animation: before-after-scroll 45s linear infinite;
 }
 
-.before-after-marquee:hover .before-after-track {
-  animation-play-state: paused;
-}
-
-@keyframes before-after-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .before-after-track {
-    animation: none;
-  }
+.before-after-track img {
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 /* ---------- Single Card ---------- */
