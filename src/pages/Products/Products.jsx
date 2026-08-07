@@ -94,6 +94,12 @@ function Products() {
     }
   });
 
+  const categoryCounts = { All: products.length };
+  products.forEach((item) => {
+    const label = getGroupLabel(item.category?.name);
+    categoryCounts[label] = (categoryCounts[label] || 0) + 1;
+  });
+
   const filteredProducts = products
     .filter((item) => {
 
@@ -158,6 +164,7 @@ function Products() {
               onClick={() => setCategory(label)}
             >
               {label}
+              <span className="category-count">{categoryCounts[label] || 0}</span>
             </button>
 
           ))}

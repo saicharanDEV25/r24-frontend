@@ -43,6 +43,9 @@
     }
 
     .category-buttons button{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
         background:#171717;
         border:1px solid rgba(255,208,0,.15);
         color:#fff;
@@ -56,6 +59,22 @@
     .category-buttons button:hover,
     .category-buttons .active{
         background:#FFD000;
+        color:#111;
+    }
+
+    .category-count{
+        background:rgba(255,255,255,.12);
+        color:#fff;
+        font-size:12px;
+        font-weight:700;
+        padding:2px 9px;
+        border-radius:20px;
+        transition:.35s;
+    }
+
+    .category-buttons button:hover .category-count,
+    .category-buttons .active .category-count{
+        background:rgba(0,0,0,.15);
         color:#111;
     }
 

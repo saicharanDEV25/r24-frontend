@@ -3,7 +3,6 @@ import { FaRobot } from "react-icons/fa";
 import "./AIChatBot.css";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
 import api from "../../services/api";
-import { playNotificationSound } from "../../utils/notificationSound";
 
 const bikes = [
   "125 Duke",
@@ -90,8 +89,6 @@ function AIChatBot({ chatOpen, setChatOpen }) {
         text
       }
     ]);
-
-    playNotificationSound();
 
   };
 
