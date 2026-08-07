@@ -1,6 +1,7 @@
 .services{
     background:#0b0b0b;
     padding:90px 8%;
+    scroll-margin-top:100px;
 }
 
 .services h2{

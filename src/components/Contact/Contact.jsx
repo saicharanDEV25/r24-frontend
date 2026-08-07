@@ -98,7 +98,9 @@ function Contact() {
             <div>
               <h3>Call Us</h3>
               <p>
-                <a href="tel:+918309560622">+91 83095 60622</a>
+                <a href="tel:+918309560622" className="info-link-btn">
+                  +91 83095 60622
+                </a>
               </p>
             </div>
           </div>
@@ -107,17 +109,18 @@ function Contact() {
             <FaMapMarkerAlt className="icon" />
             <div>
               <h3>Location</h3>
-              <p>
-                <a
-                  href="https://www.google.com/maps?q=R24+Automotive,+Vardhannapeta,+Warangal,+Telangana"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  R24 Automotive<br />
-                  Vardhannapeta,<br />
-                  Warangal, Telangana
-                </a>
+              <p className="info-address">
+                R24 Automotive, Vardhannapeta,<br />
+                Warangal, Telangana
               </p>
+              <a
+                href="https://www.google.com/maps?q=R24+Automotive,+Vardhannapeta,+Warangal,+Telangana"
+                target="_blank"
+                rel="noreferrer"
+                className="info-link-btn"
+              >
+                Get Directions
+              </a>
             </div>
           </div>
 

@@ -21,27 +21,37 @@ function getOrCreateVisitorId() {
   return visitorId;
 }
 
-const VISIT_SESSION_GAP_MS = 30 * 60 * 1000; // 30 minutes
-
-function shouldTrackNewVisit() {
-  const lastVisitAt = Number(localStorage.getItem("lastVisitAt") || 0);
-  return Date.now() - lastVisitAt > VISIT_SESSION_GAP_MS;
-}
+const HEARTBEAT_INTERVAL_MS = 45 * 1000; // 45 seconds
 
 function App() {
 
   const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
-    if (!shouldTrackNewVisit()) return;
+    const visitorId = getOrCreateVisitorId();
 
-    api
-      .post("/analytics/visit", {
-        visitorId: getOrCreateVisitorId(),
-        path: window.location.pathname,
-      })
-      .then(() => localStorage.setItem("lastVisitAt", String(Date.now())))
-      .catch((error) => console.error("Error tracking visit:", error));
+    // Tracked once per tab session — surviving a background/minimize, but
+    // reset when the tab is actually closed and reopened.
+    if (!sessionStorage.getItem("visitTracked")) {
+      api
+        .post("/analytics/visit", {
+          visitorId,
+          path: window.location.pathname,
+        })
+        .then(() => sessionStorage.setItem("visitTracked", "1"))
+        .catch((error) => console.error("Error tracking visit:", error));
+    }
+
+    const sendHeartbeat = () => {
+      api
+        .post("/analytics/heartbeat", { visitorId })
+        .catch(() => {});
+    };
+
+    sendHeartbeat();
+    const interval = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL_MS);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -49,19 +59,19 @@ function App() {
       {/* Website Pages */}
       <AppRoutes />
 
-      {/* AI Chatbot */}
-      <AIChatBot
-        chatOpen={chatOpen}
-        setChatOpen={setChatOpen}
-      />
+      <div className="floating-stack">
+        <AIChatBot
+          chatOpen={chatOpen}
+          setChatOpen={setChatOpen}
+        />
 
-      {/* Floating Buttons */}
-      {!chatOpen && (
-        <>
-          <InstagramButton />
-          <WhatsAppButton />
-        </>
-      )}
+        {!chatOpen && (
+          <>
+            <InstagramButton />
+            <WhatsAppButton />
+          </>
+        )}
+      </div>
     </CustomerAuthProvider>
   );
 }

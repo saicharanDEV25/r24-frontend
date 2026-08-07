@@ -70,6 +70,29 @@
     color:#FFD000;
 }
 
+.info-address{
+    margin-bottom:10px;
+}
+
+.info-link-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:9px 18px;
+    border:1.5px solid #FFD000;
+    border-radius:30px;
+    color:#FFD000 !important;
+    font-weight:700;
+    font-size:14px;
+    transition:.3s;
+}
+
+.info-link-btn:hover{
+    background:#FFD000;
+    color:#000 !important;
+    transform:translateY(-2px);
+}
+
 .social-buttons{
     display:grid;
     grid-template-columns:repeat(2,1fr);

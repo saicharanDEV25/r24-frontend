@@ -1,6 +1,4 @@
-/* ======================================================
-   RESET
-====================================================== */
+/* Reset */
 
 *{
     margin:0;
@@ -28,29 +26,20 @@ input{
 }
 
 
-/* ======================================================
-   FLOATING CONTAINER
-====================================================== */
+/* Floating Container */
 
 .floating-ai{
-    position: fixed;
-    right: 20px;
-    bottom: 30px;
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    z-index: 99999;
 }
 
 
-/* ======================================================
-   AI BUTTON
-====================================================== */
+/* AI Button */
 
 .ai-button{
-    position:fixed;
-    right:25px;
-    bottom:175px;          /* raised so it sits cleanly above IG + WA */
+    position:relative;
 
     width:58px;
     height:58px;
@@ -107,17 +96,13 @@ input{
 }
 
 
-/* ======================================================
-   POPUP
-====================================================== */
+/* Popup */
 
 .ai-popup{
 
-    position:absolute;
+    position:relative;
 
-    right:75px;
-
-    bottom:170px;          /* matched with new button position */
+    margin-bottom:10px;
 
     width:220px;
 
@@ -145,9 +130,9 @@ input{
 
     position:absolute;
 
-    right:-7px;
+    right:20px;
 
-    bottom:22px;
+    bottom:-7px;
 
     width:15px;
 
@@ -180,19 +165,19 @@ input{
 }
 
 
-/* ======================================================
-   CHAT CONTAINER
-====================================================== */
+/* Chat Container */
 
 .chat-container{
 
-    position:absolute;
+    position:fixed;
 
-    right:0;
+    right:20px;
 
-    bottom:80px;           /* slight upward shift for better clearance */
+    bottom:20px;
 
     width:390px;
+
+    max-height:calc(100vh - 40px);
 
     height:min(690px, 75vh);
 
@@ -208,10 +193,10 @@ input{
 
     box-shadow:0 25px 60px rgba(0,0,0,.35);
 
+    z-index:9999;
+
 }
-/* ======================================================
-   CHAT HEADER
-====================================================== */
+/* Chat Header */
 
 .chat-header{
 
@@ -292,9 +277,7 @@ input{
 }
 
 
-/* ======================================================
-   CHAT BODY
-====================================================== */
+/* Chat Body */
 
 .chat-body{
 
@@ -335,9 +318,7 @@ input{
 }
 
 
-/* ======================================================
-   BOT MESSAGE
-====================================================== */
+/* Bot Message */
 
 .bot-message{
 
@@ -368,9 +349,7 @@ input{
 }
 
 
-/* ======================================================
-   USER MESSAGE
-====================================================== */
+/* User Message */
 
 .user-message{
 
@@ -403,9 +382,7 @@ input{
 }
 
 
-/* ======================================================
-   MESSAGE ANIMATION
-====================================================== */
+/* Message Animation */
 
 @keyframes messageShow{
 
@@ -426,9 +403,7 @@ input{
     }
 
 }
-/* ======================================================
-   LEAD FORM
-====================================================== */
+/* Lead Form */
 
 .lead-form{
 
@@ -515,9 +490,7 @@ input{
 }
 
 
-/* ======================================================
-   MENU BUTTONS
-====================================================== */
+/* Menu Buttons */
 
 .menu-buttons{
 
@@ -588,9 +561,7 @@ input{
 }
 
 
-/* ======================================================
-   PRODUCT / SERVICE BUTTON ICON SPACING
-====================================================== */
+/* Product / Service Button Icon Spacing */
 
 .menu-buttons button span{
 
@@ -599,9 +570,7 @@ input{
 }
 
 
-/* ======================================================
-   INPUT & BUTTON ANIMATION
-====================================================== */
+/* Input & Button Animation */
 
 .lead-form input,
 .lead-form button,
@@ -610,9 +579,7 @@ input{
     transition:all .25s ease;
 
 }
-/* ======================================================
-   CONTACT ACTIONS
-====================================================== */
+/* Contact Actions */
 
 .chat-actions{
 
@@ -661,33 +628,20 @@ input{
 }
 
 
-/* ======================================================
-   MOBILE
-====================================================== */
+/* Mobile */
 
 @media (max-width:768px){
-
-    .floating-ai{
-
-        right:15px;
-
-        bottom:25px;
-
-    }
 
     .ai-button{
 
         width:56px;
 
         height:56px;
-        bottom:210px;      /* higher so it clears IG + WA */
         font-size:26px;
     }
 
     .ai-popup{
 
-        right:72px;
-        bottom:185px;      /* matched */
         width:170px;
         padding:12px;
         font-size:12px;
@@ -697,8 +651,6 @@ input{
     .chat-container{
 
         width:320px;
-        height:520px;
-        bottom:145px;      /* raised for clearance */
         border-radius:18px;
     }
 
@@ -711,41 +663,27 @@ input{
 }
 
 
-/* ======================================================
-   SMALL MOBILE
-====================================================== */
+/* Small Mobile */
 
 @media (max-width:480px){
-
-    .floating-ai{
-
-        right:10px;
-
-        bottom:20px;
-
-    }
 
     .chat-container{
 
         width:calc(100vw - 20px);
         max-width:340px;
         height:min(500px, 78vh);
-        bottom:140px;      /* raised */
     }
 
     .ai-button{
 
         width:54px;
         height:54px;
-        bottom:165px;      /* raised */
         font-size:24px;
     }
 
     .ai-popup{
 
         width:165px;
-        right:68px;
-        bottom:160px;      /* matched */
     }
 
     .chat-header{
@@ -775,34 +713,19 @@ input{
 }
 
 
-/* ======================================================
-   VERY SMALL HEIGHT SCREENS (short mobile viewports)
-====================================================== */
+/* Very Small Height Screens (short Mobile Viewports) */
 
 @media (max-height:640px){
 
     .chat-container{
 
         height:min(460px, 82vh);
-        bottom:120px;
-    }
-
-    .ai-button{
-
-        bottom:115px;
-    }
-
-    .ai-popup{
-
-        bottom:110px;
     }
 
 }
 
 
-/* ======================================================
-   LARGE DESKTOP
-====================================================== */
+/* Large Desktop */
 
 @media (min-width:1400px){
 
@@ -815,9 +738,7 @@ input{
 }
 
 
-/* ======================================================
-   EFFECTS
-====================================================== */
+/* Effects */
 
 .chat-container{
 
