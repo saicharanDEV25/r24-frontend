@@ -3,7 +3,9 @@ import AppRoutes from "./routes/AppRoutes";
 import AIChatBot from "./components/AIChatBot/AIChatBot";
 import InstagramButton from "./components/Instagram/InstagramButton";
 import WhatsAppButton from "./components/WhatsApp/WhatsAppButton";
+import NotificationToasts from "./components/NotificationToasts/NotificationToasts";
 import { CustomerAuthProvider } from "./context/CustomerAuthContext";
+import { NotificationProvider } from "./context/NotificationContext";
 import api from "./services/api";
 
 function getOrCreateVisitorId() {
@@ -56,22 +58,26 @@ function App() {
 
   return (
     <CustomerAuthProvider>
-      {/* Website Pages */}
-      <AppRoutes />
+      <NotificationProvider>
+        {/* Website Pages */}
+        <AppRoutes />
 
-      <div className="floating-stack">
-        <AIChatBot
-          chatOpen={chatOpen}
-          setChatOpen={setChatOpen}
-        />
+        <NotificationToasts />
 
-        {!chatOpen && (
-          <>
-            <InstagramButton />
-            <WhatsAppButton />
-          </>
-        )}
-      </div>
+        <div className="floating-stack">
+          <AIChatBot
+            chatOpen={chatOpen}
+            setChatOpen={setChatOpen}
+          />
+
+          {!chatOpen && (
+            <>
+              <InstagramButton />
+              <WhatsAppButton />
+            </>
+          )}
+        </div>
+      </NotificationProvider>
     </CustomerAuthProvider>
   );
 }

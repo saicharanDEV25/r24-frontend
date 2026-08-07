@@ -114,6 +114,99 @@
     transform:translateY(-2px);
 }
 
+.notif-menu{
+    position:relative;
+}
+
+.notif-bell-btn{
+    position:relative;
+    width:42px;
+    height:42px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:50%;
+    color:#fff;
+    font-size:17px;
+    transition:.3s;
+}
+
+.notif-bell-btn:hover{
+    border-color:rgba(255,208,0,.4);
+    color:#FFD000;
+}
+
+.notif-dot{
+    position:absolute;
+    top:8px;
+    right:8px;
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:#ef4444;
+    border:2px solid #111;
+}
+
+.notif-dropdown{
+    position:absolute;
+    top:calc(100% + 12px);
+    right:0;
+    width:280px;
+    max-height:360px;
+    overflow-y:auto;
+    background:#151515;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:14px;
+    padding:10px;
+    box-shadow:0 20px 45px rgba(0,0,0,.45);
+    animation:profile-dropdown-in .2s ease;
+    z-index:1002;
+}
+
+.notif-dropdown-header{
+    color:#999;
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    padding:8px 12px;
+}
+
+.notif-empty{
+    color:#777;
+    font-size:13px;
+    text-align:center;
+    padding:24px 12px;
+}
+
+.notif-item{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    width:100%;
+    text-align:left;
+    background:none;
+    border:none;
+    border-radius:8px;
+    padding:11px 12px;
+    color:#eee;
+    font-size:13.5px;
+    font-weight:500;
+}
+
+.notif-item:hover{
+    background:rgba(255,208,0,.1);
+    color:#FFD000;
+}
+
+.notif-item small{
+    color:#777;
+    font-size:11.5px;
+}
+
 .profile-menu{
     position:relative;
 }
@@ -271,6 +364,19 @@
     }
 
     .profile-dropdown{
+        position:static;
+        width:100%;
+        margin-top:8px;
+        box-shadow:none;
+    }
+
+    .notif-menu{
+        display:flex;
+        justify-content:center;
+        width:100%;
+    }
+
+    .notif-dropdown{
         position:static;
         width:100%;
         margin-top:8px;

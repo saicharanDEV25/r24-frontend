@@ -8,6 +8,37 @@ import LoginModal from "../../components/Auth/LoginModal";
 import Navbar from "../../components/Layout/Navbar/Navbar";
 import Footer from "../../components/Layout/Footer/Footer";
 
+const CATEGORY_GROUPS = {
+  "KTM Accessories": [
+    "Air Filters",
+    "Oil Filters",
+    "Spark Plugs",
+    "Chain & Sprockets",
+    "Brake Pads",
+    "Brake Discs & Rotors",
+    "Clutch Plates",
+    "Fuel Pumps",
+    "Batteries",
+    "Handlebar Grips & Levers",
+    "Mirrors",
+    "Foot Pegs & Rearsets",
+    "Suspension & Fork Parts",
+    "Radiator & Cooling",
+    "Cables & Wiring",
+    "Lighting & Bulbs",
+    "Seat & Comfort",
+    "Crash Guards & Frame Sliders",
+    "Number Plate & Tail Tidy",
+  ],
+};
+
+function getGroupLabel(categoryName) {
+  for (const [group, members] of Object.entries(CATEGORY_GROUPS)) {
+    if (members.includes(categoryName)) return group;
+  }
+  return categoryName;
+}
+
 function Products() {
 
   const [products, setProducts] = useState([]);
@@ -15,6 +46,8 @@ function Products() {
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+  const [availability, setAvailability] = useState("All");
+  const [sortBy, setSortBy] = useState("default");
 
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
@@ -53,20 +86,39 @@ function Products() {
     }
   };
 
-  const filteredProducts = products.filter((item) => {
-
-    const matchesCategory =
-      category === "All" ||
-      item.category?.name === category;
-
-    const matchesSearch =
-      (item.name || "")
-        .toLowerCase()
-        .includes(search.toLowerCase());
-
-    return matchesCategory && matchesSearch;
-
+  const categoryFilterOptions = ["All"];
+  categories.forEach((cat) => {
+    const label = getGroupLabel(cat.name);
+    if (!categoryFilterOptions.includes(label)) {
+      categoryFilterOptions.push(label);
+    }
   });
+
+  const filteredProducts = products
+    .filter((item) => {
+
+      const matchesCategory =
+        category === "All" ||
+        getGroupLabel(item.category?.name) === category;
+
+      const matchesSearch =
+        (item.name || "")
+          .toLowerCase()
+          .includes(search.toLowerCase());
+
+      const matchesAvailability =
+        availability === "All" ||
+        (availability === "In Stock" ? item.stock > 0 : item.stock <= 0);
+
+      return matchesCategory && matchesSearch && matchesAvailability;
+
+    })
+    .sort((a, b) => {
+      if (sortBy === "priceLowHigh") return a.price - b.price;
+      if (sortBy === "priceHighLow") return b.price - a.price;
+      if (sortBy === "nameAZ") return (a.name || "").localeCompare(b.name || "");
+      return 0;
+    });
 
   return (
 
@@ -98,24 +150,44 @@ function Products() {
 
         <div className="category-buttons">
 
-          <button
-            className={category === "All" ? "active" : ""}
-            onClick={() => setCategory("All")}
-          >
-            All
-          </button>
-
-          {categories.map((cat) => (
+          {categoryFilterOptions.map((label) => (
 
             <button
-              key={cat.id}
-              className={category === cat.name ? "active" : ""}
-              onClick={() => setCategory(cat.name)}
+              key={label}
+              className={category === label ? "active" : ""}
+              onClick={() => setCategory(label)}
             >
-              {cat.name}
+              {label}
             </button>
 
           ))}
+
+        </div>
+
+        <div className="filter-toolbar">
+
+          <div className="availability-buttons">
+            {["All", "In Stock", "Out of Stock"].map((label) => (
+              <button
+                key={label}
+                className={availability === label ? "active" : ""}
+                onClick={() => setAvailability(label)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <select
+            className="sort-select"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="default">Sort: Default</option>
+            <option value="priceLowHigh">Price: Low to High</option>
+            <option value="priceHighLow">Price: High to Low</option>
+            <option value="nameAZ">Name: A-Z</option>
+          </select>
 
         </div>
 

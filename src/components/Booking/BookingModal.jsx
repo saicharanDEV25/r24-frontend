@@ -3,11 +3,14 @@ import { FaTimes, FaCalendarCheck } from "react-icons/fa";
 import "./BookingModal.css";
 import api from "../../services/api";
 import { KTM_BIKES as bikes } from "../../constants/bikes";
+import { useCustomerAuth } from "../../context/CustomerAuthContext";
 
 function BookingModal({ serviceType, price, onClose }) {
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [bikeModel, setBikeModel] = useState("");
+  const { customer } = useCustomerAuth();
+
+  const [name, setName] = useState(customer?.name || "");
+  const [phone, setPhone] = useState(customer?.phoneNumber || "");
+  const [bikeModel, setBikeModel] = useState(customer?.bikeModel || "");
   const [bookingDate, setBookingDate] = useState("");
   const [bookingTime, setBookingTime] = useState("");
   const [problemDescription, setProblemDescription] = useState("");

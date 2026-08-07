@@ -53,6 +53,14 @@ function ProfilePage() {
   const [garageSaving, setGarageSaving] = useState(false);
   const [garageSaveMsg, setGarageSaveMsg] = useState("");
 
+  useEffect(() => {
+    if (!customer) return;
+    setName(customer.name || "");
+    setEmail(customer.email || "");
+    setBikeModel(customer.bikeModel || "");
+    setPurchaseYear(customer.purchaseYear || "");
+  }, [customer]);
+
   const loadBookings = async () => {
     try {
       setBookingsLoading(true);
