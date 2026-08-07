@@ -1,21 +1,6 @@
 import { useState } from "react";
 import "./CustomPainting.css";
-
-const bikes = [
-  "125 Duke",
-  "200 Duke",
-  "250 Duke",
-  "390 Duke",
-  "RC 200",
-  "RC 390",
-  "250 Adventure",
-  "390 Adventure",
-  "390 Adventure X",
-  "390 Enduro R",
-  "790 Duke",
-  "890 Duke R",
-  "1290 Super Duke R",
-];
+import { BIKE_BRANDS, KTM_FAMILIES } from "../../constants/bikes";
 
 const presetColors = [
   { name: "KTM Orange", hex: "#FF6600" },
@@ -33,46 +18,113 @@ const presetColors = [
 ];
 
 function CustomPainting() {
+  const [selectedBrand, setSelectedBrand] = useState(null);
+  const [selectedFamily, setSelectedFamily] = useState(null);
   const [selectedBike, setSelectedBike] = useState(null);
   const [selectedColor, setSelectedColor] = useState(presetColors[0]);
+
+  const isKtm = selectedBrand === "KTM";
+  const brandModels = selectedBrand
+    ? BIKE_BRANDS.find((b) => b.brand === selectedBrand)?.models || []
+    : [];
+
+  const resetBikeSelection = () => {
+    setSelectedBrand(null);
+    setSelectedFamily(null);
+    setSelectedBike(null);
+  };
 
   const handleCustomColor = (hex) => {
     setSelectedColor({ name: "Custom Colour", hex });
   };
 
   const whatsappMessage = encodeURIComponent(
-    `Hello R24 Automotive 👋 I'm interested in Custom Painting for my KTM ${selectedBike} in "${selectedColor.name}" (${selectedColor.hex}). Please share pricing and timelines.`
+    `Hello R24 Automotive 👋 I'm interested in Custom Painting for my ${selectedBrand} ${selectedBike} in "${selectedColor.name}" (${selectedColor.hex}). Please share pricing and timelines.`
   );
 
   return (
     <section className="custom-painting" id="custom-painting">
       <div className="section-heading">
         <span className="section-tag">Custom Painting</span>
-        <h2>Design Your KTM</h2>
+        <h2>Design Your Bike</h2>
         <p>
           Pick your bike model and colour, then enquire — our painters take
           it from there.
         </p>
       </div>
 
-      <div className="bike-select-grid">
-        {bikes.map((bike) => (
+      {!selectedBrand ? (
+        <div className="bike-select-grid">
+          {BIKE_BRANDS.map((b) => (
+            <button
+              key={b.brand}
+              className="bike-select-card"
+              onClick={() => setSelectedBrand(b.brand)}
+            >
+              {b.brand}
+            </button>
+          ))}
+        </div>
+      ) : isKtm && !selectedFamily ? (
+        <div className="bike-select-grid">
           <button
-            key={bike}
-            className={
-              selectedBike === bike
-                ? "bike-select-card active"
-                : "bike-select-card"
-            }
-            onClick={() => setSelectedBike(bike)}
+            className="bike-select-back"
+            onClick={() => setSelectedBrand(null)}
           >
-            {bike}
+            ← Back to brands
           </button>
-        ))}
-      </div>
-
-      {selectedBike && (
+          {KTM_FAMILIES.map((f) => (
+            <button
+              key={f.family}
+              className="bike-select-card"
+              onClick={() => setSelectedFamily(f)}
+            >
+              {f.family}
+            </button>
+          ))}
+        </div>
+      ) : isKtm && !selectedBike ? (
+        <div className="bike-select-grid">
+          <button
+            className="bike-select-back"
+            onClick={() => setSelectedFamily(null)}
+          >
+            ← Back to models
+          </button>
+          {selectedFamily.variants.map((v) => (
+            <button
+              key={v.model}
+              className="bike-select-card"
+              onClick={() => setSelectedBike(v.model)}
+            >
+              {v.cc} cc
+            </button>
+          ))}
+        </div>
+      ) : !isKtm && !selectedBike ? (
+        <div className="bike-select-grid">
+          <button
+            className="bike-select-back"
+            onClick={() => setSelectedBrand(null)}
+          >
+            ← Back to brands
+          </button>
+          {brandModels.map((m) => (
+            <button
+              key={m}
+              className="bike-select-card"
+              onClick={() => setSelectedBike(m)}
+            >
+              {m}
+            </button>
+          ))}
+        </div>
+      ) : (
         <div className="color-picker">
+          <button className="bike-select-back" onClick={resetBikeSelection}>
+            ← Change Bike
+          </button>
+
           <h4>Popular Colours</h4>
 
           <div className="color-swatch-grid">
@@ -104,7 +156,8 @@ function CustomPainting() {
           </label>
 
           <p className="selected-color-label">
-            KTM {selectedBike} — Selected: <strong>{selectedColor.name}</strong>{" "}
+            {selectedBrand} {selectedBike} — Selected:{" "}
+            <strong>{selectedColor.name}</strong>{" "}
             <span className="selected-color-hex">({selectedColor.hex})</span>
           </p>
 
@@ -121,5 +174,6 @@ function CustomPainting() {
     </section>
   );
 }
+
 
 export default CustomPainting;

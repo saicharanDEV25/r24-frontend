@@ -3,22 +3,7 @@ import { FaRobot } from "react-icons/fa";
 import "./AIChatBot.css";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
 import api from "../../services/api";
-
-const bikes = [
-  "125 Duke",
-  "200 Duke",
-  "250 Duke",
-  "390 Duke",
-  "RC 200",
-  "RC 390",
-  "250 Adventure",
-  "390 Adventure",
-  "390 Adventure X",
-  "390 Enduro R",
-  "790 Duke",
-  "890 Duke R",
-  "1290 Super Duke R",
-];
+import { BIKE_BRANDS } from "../../constants/bikes";
 
 const bikeServices = [
   "Regular Maintenance",
@@ -44,6 +29,8 @@ function AIChatBot({ chatOpen, setChatOpen }) {
   const [name, setName] = useState("");
 
   const [phone, setPhone] = useState("");
+
+  const [brand, setBrand] = useState("");
 
   const [bike, setBike] = useState("");
 
@@ -158,12 +145,25 @@ function AIChatBot({ chatOpen, setChatOpen }) {
 
     addBot(`Welcome ${name} 👋`);
 
-    addBot("Choose your KTM Bike.");
+    addBot("Which brand is your bike?");
+
+    setStep("brand");
+
+  };
+
+  const chooseBrand = (selectedBrand) => {
+
+    setBrand(selectedBrand);
+
+    addUser(selectedBrand);
+
+    addBot(`Choose your ${selectedBrand} model.`);
 
     setStep("bike");
 
   };
-    const chooseBike = (selectedBike) => {
+
+  const chooseBike = (selectedBike) => {
 
     setBike(selectedBike);
 
@@ -430,27 +430,47 @@ open && (
         }
                 {
 
+        step==="brand" && (
+
+        <div className="menu-buttons">
+
+          <h4>Choose Your Bike Brand</h4>
+
+          {BIKE_BRANDS.map((group) => (
+            <button key={group.brand} onClick={()=>chooseBrand(group.brand)}>
+              🏍 {group.brand}
+            </button>
+          ))}
+
+        </div>
+
+        )
+
+        }
+
+        {
+
         step==="bike" && (
 
         <div className="menu-buttons">
 
-          <h4>Choose Your KTM Bike</h4>
+          <h4>Choose Your {brand} Model</h4>
 
-          {bikes.map((bikeName) => (
+          {(BIKE_BRANDS.find((group) => group.brand === brand)?.models || []).map((bikeName) => (
             <button key={bikeName} onClick={()=>chooseBike(bikeName)}>
               🏍 {bikeName}
             </button>
           ))}
 
         </div>
-        
-        
+
+
 
         )
-        
+
 
         }
-        
+
 
         {
 

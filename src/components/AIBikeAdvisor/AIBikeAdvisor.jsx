@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   FaGasPump, FaBolt, FaCompactDisc, FaLink, FaTachometerAlt,
-  FaSearch, FaTools, FaRupeeSign, FaCalendarCheck, FaArrowLeft,
+  FaSearch, FaTools, FaCalendarCheck, FaArrowLeft,
 } from "react-icons/fa";
 import BookingModal from "../Booking/BookingModal";
 import "./AIBikeAdvisor.css";
@@ -17,7 +17,6 @@ const symptoms = [
       "Worn engine mounts / bearings",
     ],
     service: "General Checkup",
-    cost: "₹249 onwards (diagnosis, parts extra if needed)",
   },
   {
     icon: <FaBolt />,
@@ -29,7 +28,6 @@ const symptoms = [
       "Internal engine wear",
     ],
     service: "Engine Repair",
-    cost: "₹1,499 onwards",
   },
   {
     icon: <FaGasPump />,
@@ -41,7 +39,6 @@ const symptoms = [
       "Starter motor issue",
     ],
     service: "General Checkup",
-    cost: "₹249 onwards",
   },
   {
     icon: <FaCompactDisc />,
@@ -53,7 +50,6 @@ const symptoms = [
       "Warped brake disc",
     ],
     service: "Brake Service",
-    cost: "₹399",
   },
   {
     icon: <FaSearch />,
@@ -65,7 +61,6 @@ const symptoms = [
       "Low tyre pressure",
     ],
     service: "Regular Maintenance",
-    cost: "₹499",
   },
   {
     icon: <FaLink />,
@@ -76,7 +71,6 @@ const symptoms = [
       "Worn sprockets",
     ],
     service: "Chain Service",
-    cost: "₹299",
   },
 ];
 
@@ -134,15 +128,6 @@ function AIBikeAdvisor() {
 
             <div className="advisor-step-arrow">↓</div>
 
-            <div className="advisor-step">
-              <span className="advisor-step-label">
-                <FaRupeeSign /> Estimated Cost
-              </span>
-              <p>{selected.cost}</p>
-            </div>
-
-            <div className="advisor-step-arrow">↓</div>
-
             <button className="advisor-book-btn" onClick={() => setBooking(true)}>
               <FaCalendarCheck /> Book Appointment
             </button>
@@ -153,7 +138,6 @@ function AIBikeAdvisor() {
       {booking && (
         <BookingModal
           serviceType={selected.service}
-          price={selected.cost}
           onClose={() => setBooking(false)}
         />
       )}

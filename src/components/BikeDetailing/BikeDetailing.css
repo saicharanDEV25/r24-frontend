@@ -147,17 +147,11 @@
 .detailing-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 14px;
   margin-top: 24px;
   padding-top: 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.detailing-price {
-  color: #ffd000;
-  font-weight: 700;
-  font-size: 16px;
 }
 
 .detailing-btn {

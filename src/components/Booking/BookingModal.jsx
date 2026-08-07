@@ -2,21 +2,33 @@ import { useState } from "react";
 import { FaTimes, FaCalendarCheck } from "react-icons/fa";
 import "./BookingModal.css";
 import api from "../../services/api";
-import { KTM_BIKES as bikes } from "../../constants/bikes";
+import { BIKE_BRANDS, KTM_FAMILIES } from "../../constants/bikes";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
 
-function BookingModal({ serviceType, price, onClose }) {
+function BookingModal({ serviceType, onClose }) {
   const { customer } = useCustomerAuth();
 
   const [name, setName] = useState(customer?.name || "");
   const [phone, setPhone] = useState(customer?.phoneNumber || "");
   const [bikeModel, setBikeModel] = useState(customer?.bikeModel || "");
+  const [bikeBrand, setBikeBrand] = useState(null);
+  const [bikeFamily, setBikeFamily] = useState(null);
   const [bookingDate, setBookingDate] = useState("");
   const [bookingTime, setBookingTime] = useState("");
   const [problemDescription, setProblemDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
+
+  const brandModels = bikeBrand
+    ? BIKE_BRANDS.find((b) => b.brand === bikeBrand)?.models || []
+    : [];
+
+  const changeBike = () => {
+    setBikeModel("");
+    setBikeBrand(null);
+    setBikeFamily(null);
+  };
 
   const submitBooking = async (e) => {
     e.preventDefault();
@@ -56,7 +68,7 @@ function BookingModal({ serviceType, price, onClose }) {
       });
 
       const message = encodeURIComponent(
-        `Hello R24 Automotive 👋 I've booked "${serviceType}" (${price}).\n\nName: ${name}\nBike: ${bikeModel}\nPreferred Date: ${bookingDate}${
+        `Hello R24 Automotive 👋 I've booked "${serviceType}".\n\nName: ${name}\nBike: ${bikeModel}\nPreferred Date: ${bookingDate}${
           bookingTime ? `\nPreferred Time: ${bookingTime}` : ""
         }${
           problemDescription
@@ -88,8 +100,7 @@ function BookingModal({ serviceType, price, onClose }) {
             <FaCalendarCheck className="booking-success-icon" />
             <h2>Booking Requested!</h2>
             <p>
-              We've received your request for "{serviceType}". Our team will
-              confirm your slot on WhatsApp shortly.
+              Our team will contact you within 1 hour.
             </p>
             <button className="booking-submit-btn" onClick={onClose}>
               Done
@@ -102,7 +113,6 @@ function BookingModal({ serviceType, price, onClose }) {
             </div>
 
             <h2>Book "{serviceType}"</h2>
-            <p className="booking-modal-subtext">{price}</p>
 
             <form onSubmit={submitBooking} className="booking-form">
               <input
@@ -122,17 +132,94 @@ function BookingModal({ serviceType, price, onClose }) {
                 }
               />
 
-              <select
-                value={bikeModel}
-                onChange={(e) => setBikeModel(e.target.value)}
-              >
-                <option value="">Select Your Bike</option>
-                {bikes.map((bike) => (
-                  <option key={bike} value={bike}>
-                    {bike}
-                  </option>
-                ))}
-              </select>
+              {bikeModel ? (
+                <div className="booking-bike-chosen">
+                  <span>
+                    Bike: <strong>{bikeBrand ? `${bikeBrand} ` : ""}{bikeModel}</strong>
+                  </span>
+                  <button
+                    type="button"
+                    className="booking-bike-change"
+                    onClick={changeBike}
+                  >
+                    Change
+                  </button>
+                </div>
+              ) : !bikeBrand ? (
+                <div className="booking-bike-select-grid">
+                  <p className="booking-bike-label">Select Your Bike Brand</p>
+                  {BIKE_BRANDS.map((b) => (
+                    <button
+                      type="button"
+                      key={b.brand}
+                      className="booking-bike-card"
+                      onClick={() => setBikeBrand(b.brand)}
+                    >
+                      {b.brand}
+                    </button>
+                  ))}
+                </div>
+              ) : bikeBrand === "KTM" && !bikeFamily ? (
+                <div className="booking-bike-select-grid">
+                  <button
+                    type="button"
+                    className="booking-bike-back"
+                    onClick={() => setBikeBrand(null)}
+                  >
+                    ← Back to brands
+                  </button>
+                  {KTM_FAMILIES.map((f) => (
+                    <button
+                      type="button"
+                      key={f.family}
+                      className="booking-bike-card"
+                      onClick={() => setBikeFamily(f)}
+                    >
+                      {f.family}
+                    </button>
+                  ))}
+                </div>
+              ) : bikeBrand === "KTM" && bikeFamily ? (
+                <div className="booking-bike-select-grid">
+                  <button
+                    type="button"
+                    className="booking-bike-back"
+                    onClick={() => setBikeFamily(null)}
+                  >
+                    ← Back to models
+                  </button>
+                  {bikeFamily.variants.map((v) => (
+                    <button
+                      type="button"
+                      key={v.model}
+                      className="booking-bike-card"
+                      onClick={() => setBikeModel(v.model)}
+                    >
+                      {v.cc} cc
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="booking-bike-select-grid">
+                  <button
+                    type="button"
+                    className="booking-bike-back"
+                    onClick={() => setBikeBrand(null)}
+                  >
+                    ← Back to brands
+                  </button>
+                  {brandModels.map((m) => (
+                    <button
+                      type="button"
+                      key={m}
+                      className="booking-bike-card"
+                      onClick={() => setBikeModel(m)}
+                    >
+                      {m}
+                    </button>
+                  ))}
+                </div>
+              )}
 
               <div className="booking-form-row">
                 <input

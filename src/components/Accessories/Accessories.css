@@ -72,6 +72,22 @@
   animation: card-fade-up 0.5s ease both;
 }
 
+.bike-select-back {
+  grid-column: 1 / -1;
+  background: none;
+  border: none;
+  color: #ffd000;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  padding: 4px 0 10px;
+  width: fit-content;
+}
+
+.bike-select-back:hover {
+  text-decoration: underline;
+}
+
 @keyframes card-fade-up {
   from {
     opacity: 0;
@@ -132,11 +148,31 @@
   text-align: center;
   color: #cfcfcf;
   font-size: 15px;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .catalog-note strong {
   color: #ffd000;
+}
+
+.accessories-catalog .search-box {
+  margin: 0 auto 34px;
+}
+
+.accessories-catalog .category-buttons {
+  margin-bottom: 30px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.accessories-catalog .filter-toolbar {
+  margin-bottom: 34px;
+}
+
+.accessories-catalog .products-grid {
+  margin-top: 6px;
 }
 
 .no-products-msg {

@@ -146,17 +146,11 @@
 .bike-service-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 14px;
   margin-top: 24px;
   padding-top: 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.bike-service-price {
-  color: #ffd000;
-  font-weight: 700;
-  font-size: 16px;
 }
 
 .bike-service-btn {
@@ -272,10 +266,6 @@
   .bike-service-card p {
     font-size: 10.5px;
     line-height: 1.5;
-  }
-
-  .bike-service-price {
-    font-size: 12px;
   }
 
   .bike-service-btn {

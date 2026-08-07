@@ -1,4 +1,4 @@
-.before-after {
+  .before-after {
   background: #0b0b0b;
   padding: 100px 8%;
   position: relative;
@@ -55,17 +55,40 @@
   margin: 0 auto;
 }
 
-/* ---------- Grid ---------- */
-.comparison-grid {
-  max-width: 1280px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+/* ---------- Looping marquee ---------- */
+.before-after-marquee {
+  width: 100%;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.before-after-track {
+  display: flex;
   gap: 36px;
+  width: max-content;
+  animation: before-after-scroll 45s linear infinite;
+}
+
+.before-after-marquee:hover .before-after-track {
+  animation-play-state: paused;
+}
+
+@keyframes before-after-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .before-after-track {
+    animation: none;
+  }
 }
 
 /* ---------- Single Card ---------- */
 .comparison-card {
+  flex: 0 0 380px;
+  width: 380px;
   background: #121212;
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 20px;
@@ -160,9 +183,13 @@
 /* Responsive */
 
 @media (max-width: 992px) {
-  .comparison-grid {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  .before-after-track {
     gap: 28px;
+  }
+
+  .comparison-card {
+    flex-basis: 320px;
+    width: 320px;
   }
 
   .image-box img,
@@ -172,9 +199,6 @@
 }
 
 @media (max-width: 768px) {
-     .comparison-grid {
-    grid-template-columns: 1fr;
-  }
   .before-after {
     padding: 70px 20px;
   }
@@ -183,9 +207,13 @@
     font-size: 34px;
   }
 
-  .comparison-grid {
-    grid-template-columns: 1fr;
-    gap: 24px;
+  .before-after-track {
+    gap: 20px;
+  }
+
+  .comparison-card {
+    flex-basis: 280px;
+    width: 280px;
   }
 
   .images-wrapper {
@@ -216,6 +244,8 @@
   }
 
   .comparison-card {
+    flex-basis: 240px;
+    width: 240px;
     padding: 14px;
     border-radius: 16px;
   }

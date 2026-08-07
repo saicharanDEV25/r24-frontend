@@ -1,21 +1,9 @@
 import { useState } from "react";
 import "./TyresWheels.css";
+import { BIKE_BRANDS, KTM_FAMILIES } from "../../constants/bikes";
 
-const bikes = [
-  "125 Duke",
-  "200 Duke",
-  "250 Duke",
-  "390 Duke",
-  "RC 200",
-  "RC 390",
-  "250 Adventure",
-  "390 Adventure",
-  "390 Adventure X",
-  "390 Enduro R",
-  "790 Duke",
-  "890 Duke R",
-  "1290 Super Duke R",
-];
+const brandNames = BIKE_BRANDS.map((b) => b.brand);
+const familyNames = KTM_FAMILIES.map((f) => f.family);
 
 const conditions = [
   { id: "new", label: "Brand New (First Hand)" },
@@ -69,17 +57,25 @@ function OptionGroup({ step, title, options, selected, onSelect }) {
 }
 
 function TyresWheels() {
+  const [brand, setBrand] = useState(null);
+  const [family, setFamily] = useState(null);
   const [bike, setBike] = useState(null);
   const [condition, setCondition] = useState(null);
   const [tyreType, setTyreType] = useState(null);
   const [position, setPosition] = useState(null);
   const [installation, setInstallation] = useState(null);
 
+  const isKtm = brand === "KTM";
+  const brandModels = brand
+    ? BIKE_BRANDS.find((b) => b.brand === brand)?.models || []
+    : [];
+  const bikeStepSlots = isKtm ? 3 : 2;
+
   const isComplete =
     bike && condition && tyreType && position && installation;
 
   const whatsappMessage = encodeURIComponent(
-    `Hello R24 Automotive 👋 I need tyres for my KTM ${bike}.\n\nCondition: ${condition?.label}\nTyre Type: ${tyreType?.label}\nPosition: ${position?.label}\nInstallation: ${installation?.label}\n\nPlease share pricing and availability.`
+    `Hello R24 Automotive 👋 I need tyres for my ${brand} ${bike}.\n\nCondition: ${condition?.label}\nTyre Type: ${tyreType?.label}\nPosition: ${position?.label}\nInstallation: ${installation?.label}\n\nPlease share pricing and availability.`
   );
 
   return (
@@ -96,14 +92,53 @@ function TyresWheels() {
       <div className="tyre-config">
         <OptionGroup
           step="1"
-          title="Select Your Bike"
-          options={bikes}
-          selected={bike}
-          onSelect={setBike}
+          title="Select Your Brand"
+          options={brandNames}
+          selected={brand}
+          onSelect={(b) => {
+            setBrand(b);
+            setFamily(null);
+            setBike(null);
+          }}
         />
 
+        {brand && isKtm && (
+          <OptionGroup
+            step="2"
+            title="Select Your Model"
+            options={familyNames}
+            selected={family}
+            onSelect={(f) => {
+              setFamily(f);
+              setBike(null);
+            }}
+          />
+        )}
+
+        {brand && isKtm && family && (
+          <OptionGroup
+            step="3"
+            title="Select CC"
+            options={KTM_FAMILIES.find((f) => f.family === family).variants.map(
+              (v) => ({ id: v.model, label: `${v.cc} cc` })
+            )}
+            selected={bike ? { id: bike } : null}
+            onSelect={(opt) => setBike(opt.id ?? opt)}
+          />
+        )}
+
+        {brand && !isKtm && (
+          <OptionGroup
+            step="2"
+            title="Select Your Model"
+            options={brandModels}
+            selected={bike}
+            onSelect={setBike}
+          />
+        )}
+
         <OptionGroup
-          step="2"
+          step={String(bikeStepSlots + 1)}
           title="Tyre Condition"
           options={conditions}
           selected={condition}
@@ -111,7 +146,7 @@ function TyresWheels() {
         />
 
         <OptionGroup
-          step="3"
+          step={String(bikeStepSlots + 2)}
           title="Type of Tyre"
           options={tyreTypes}
           selected={tyreType}
@@ -119,7 +154,7 @@ function TyresWheels() {
         />
 
         <OptionGroup
-          step="4"
+          step={String(bikeStepSlots + 3)}
           title="Tyre Position"
           options={positions}
           selected={position}
@@ -127,7 +162,7 @@ function TyresWheels() {
         />
 
         <OptionGroup
-          step="5"
+          step={String(bikeStepSlots + 4)}
           title="Installation"
           options={installationOptions}
           selected={installation}
@@ -141,7 +176,9 @@ function TyresWheels() {
               <ul className="tyre-summary-list">
                 <li>
                   <span>Bike</span>
-                  <strong>KTM {bike}</strong>
+                  <strong>
+                    {brand} {bike}
+                  </strong>
                 </li>
                 <li>
                   <span>Condition</span>
@@ -172,7 +209,7 @@ function TyresWheels() {
             </>
           ) : (
             <p className="tyre-summary-hint">
-              Complete all 5 selections above to get an instant quote.
+              Complete all the selections above to get an instant quote.
             </p>
           )}
         </div>

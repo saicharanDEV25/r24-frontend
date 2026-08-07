@@ -35,49 +35,41 @@ const wrapTypes = [
     id: "gloss",
     name: "Gloss Wrap",
     desc: "Vibrant, mirror-like shine that makes colours pop.",
-    price: "₹8,999 onwards",
   },
   {
     id: "matte",
     name: "Matte Wrap",
     desc: "Flat, non-reflective finish for a stealthy, modern look.",
-    price: "₹9,499 onwards",
   },
   {
     id: "satin",
     name: "Satin Wrap",
     desc: "Soft sheen between gloss and matte — subtle and premium.",
-    price: "₹9,999 onwards",
   },
   {
     id: "chrome",
     name: "Chrome Wrap",
     desc: "Mirror-metallic finish for maximum head-turning impact.",
-    price: "₹13,999 onwards",
   },
   {
     id: "carbon",
     name: "Carbon Fibre Wrap",
     desc: "Woven carbon-look texture for a race-inspired finish.",
-    price: "₹11,499 onwards",
   },
   {
     id: "chameleon",
     name: "Colour-Shift Wrap",
     desc: "Shifts hue with light and viewing angle for a striking effect.",
-    price: "₹14,999 onwards",
   },
   {
     id: "camo",
     name: "Camouflage Wrap",
     desc: "Rugged camo pattern, especially popular on Adventure models.",
-    price: "₹10,999 onwards",
   },
   {
     id: "racing",
     name: "Racing Stripe Wrap",
     desc: "Bold accent stripes over a solid base for a track-inspired look.",
-    price: "₹9,999 onwards",
   },
 ];
 
@@ -127,7 +119,6 @@ function BikeWrapping() {
               <span className="wrap-type-info">
                 <strong>{wrap.name}</strong>
                 <span className="wrap-type-desc">{wrap.desc}</span>
-                <span className="wrap-type-price">{wrap.price}</span>
               </span>
             </button>
           ))}

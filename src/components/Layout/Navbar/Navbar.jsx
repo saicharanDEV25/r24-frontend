@@ -1,41 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FaBars, FaTimes, FaUserCircle, FaSignOutAlt, FaClipboardList, FaHeart, FaCalendarCheck, FaBell } from "react-icons/fa";
+import { FaBars, FaTimes, FaUserCircle, FaSignOutAlt, FaHeart, FaCalendarCheck } from "react-icons/fa";
 import "./Navbar.css";
 import { useCustomerAuth } from "../../../context/CustomerAuthContext";
-import { useNotifications } from "../../../context/NotificationContext";
 import LoginModal from "../../Auth/LoginModal";
-
-function timeAgo(timestamp) {
-  const seconds = Math.floor((Date.now() - timestamp) / 1000);
-  if (seconds < 60) return "Just now";
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-  return `${Math.floor(hours / 24)}d ago`;
-}
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [notifOpen, setNotifOpen] = useState(false);
   const profileRef = useRef(null);
-  const notifRef = useRef(null);
 
   const { customer, logout } = useCustomerAuth();
-  const { notifications, unreadCount, markAllRead } = useNotifications();
   const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) {
         setProfileOpen(false);
-      }
-      if (notifRef.current && !notifRef.current.contains(e.target)) {
-        setNotifOpen(false);
       }
     };
 
@@ -102,47 +85,6 @@ function Navbar() {
               <FaCalendarCheck /> Book Service
             </a>
 
-            {customer && (
-              <div className="notif-menu" ref={notifRef}>
-                <button
-                  className="notif-bell-btn"
-                  onClick={() => {
-                    setNotifOpen((prev) => !prev);
-                    if (!notifOpen) markAllRead();
-                  }}
-                  aria-label="Notifications"
-                >
-                  <FaBell />
-                  {unreadCount > 0 && <span className="notif-dot"></span>}
-                </button>
-
-                {notifOpen && (
-                  <div className="notif-dropdown">
-                    <div className="notif-dropdown-header">Notifications</div>
-
-                    {notifications.length === 0 ? (
-                      <p className="notif-empty">No notifications yet.</p>
-                    ) : (
-                      notifications.map((n) => (
-                        <button
-                          key={n.id}
-                          className="notif-item"
-                          onClick={() => {
-                            setNotifOpen(false);
-                            setMenuOpen(false);
-                            navigate("/profile?tab=bookings");
-                          }}
-                        >
-                          <span>{n.message}</span>
-                          <small>{timeAgo(n.createdAt)}</small>
-                        </button>
-                      ))
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-
             {customer ? (
               <div className="profile-menu" ref={profileRef}>
                 <button
@@ -175,16 +117,6 @@ function Navbar() {
                       }}
                     >
                       <FaUserCircle /> My Profile
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setProfileOpen(false);
-                        setMenuOpen(false);
-                        navigate("/profile?tab=bookings");
-                      }}
-                    >
-                      <FaClipboardList /> My Bookings
                     </button>
 
                     <button

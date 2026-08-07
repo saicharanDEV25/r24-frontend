@@ -120,8 +120,6 @@ function Products() {
 
     })
     .sort((a, b) => {
-      if (sortBy === "priceLowHigh") return a.price - b.price;
-      if (sortBy === "priceHighLow") return b.price - a.price;
       if (sortBy === "nameAZ") return (a.name || "").localeCompare(b.name || "");
       return 0;
     });
@@ -191,8 +189,6 @@ function Products() {
             onChange={(e) => setSortBy(e.target.value)}
           >
             <option value="default">Sort: Default</option>
-            <option value="priceLowHigh">Price: Low to High</option>
-            <option value="priceHighLow">Price: High to Low</option>
             <option value="nameAZ">Name: A-Z</option>
           </select>
 
@@ -240,8 +236,6 @@ function Products() {
                 <span>{item.category?.name}</span>
 
                 <h3>{item.name}</h3>
-
-                <h4>₹ {item.price}</h4>
 
                 <button
                   className="details-btn"
@@ -316,8 +310,6 @@ function Products() {
               </span>
 
               <h2>{selectedProduct.name}</h2>
-
-              <h3>₹ {selectedProduct.price}</h3>
 
               <p>{selectedProduct.description}</p>
 

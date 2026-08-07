@@ -130,6 +130,77 @@
   border-color: #ffd000;
 }
 
+.booking-bike-select-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 10px;
+}
+
+.booking-bike-label {
+  grid-column: 1 / -1;
+  color: #cfcfcf;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.booking-bike-card {
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 12px 8px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  transition: 0.25s;
+}
+
+.booking-bike-card:hover {
+  border-color: #ffd000;
+  transform: translateY(-2px);
+}
+
+.booking-bike-back {
+  grid-column: 1 / -1;
+  background: none;
+  border: none;
+  color: #ffd000;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  padding: 0 0 4px;
+  width: fit-content;
+}
+
+.booking-bike-back:hover {
+  text-decoration: underline;
+}
+
+.booking-bike-chosen {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 208, 0, 0.3);
+  border-radius: 10px;
+  padding: 13px 16px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.booking-bike-change {
+  background: none;
+  border: none;
+  color: #ffd000;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.booking-bike-change:hover {
+  text-decoration: underline;
+}
+
 .booking-error {
   color: #e74c3c;
   font-size: 13px;

@@ -1,13 +1,48 @@
 const CYLINDER_PARAMS = {
-  single: { carrierFreq: 75, pulseHz: 9 },
-  twin: { carrierFreq: 95, pulseHz: 16 },
+  single: { carrierFreq: 70, subFreq: 35, pulseHz: 9, jitter: 6 },
+  twin: { carrierFreq: 92, subFreq: 46, pulseHz: 16, jitter: 3 },
 };
 
 const EXHAUST_PARAMS = {
-  stock: { cutoff: 900, drive: 6, noiseLevel: 0.03, gain: 0.32 },
-  akrapovic: { cutoff: 2600, drive: 22, noiseLevel: 0.08, gain: 0.42 },
-  race: { cutoff: 5200, drive: 45, noiseLevel: 0.15, gain: 0.5 },
+  stock: { cutoff: 900, drive: 6, noiseLevel: 0.025, crackle: 0.03, gain: 0.32 },
+  akrapovic: { cutoff: 2600, drive: 22, noiseLevel: 0.06, crackle: 0.12, gain: 0.42 },
+  race: { cutoff: 5200, drive: 45, noiseLevel: 0.1, crackle: 0.28, gain: 0.5 },
 };
+
+// One full ride cycle through all 6 gears: idle -> 1st..6th gear, each
+// revving up and holding ~2s at its peak RPM before the shift cut -> engine
+// braking decel -> back to idle, then loops. "mult" scales pulse/carrier
+// pitch (RPM), "gain" scales loudness — dipping sharply at each shift for
+// the clutch-cut snap, rising as RPM climbs toward redline in each gear.
+const GEAR_CYCLE = [
+  { t: 0, mult: 1, gain: 0.85 },
+  { t: 1.5, mult: 1, gain: 0.85 },
+  { t: 3.2, mult: 2.3, gain: 1.05 },
+  { t: 5.2, mult: 2.3, gain: 1.05 },
+  { t: 5.45, mult: 1.5, gain: 0.5 },
+  { t: 5.65, mult: 1.5, gain: 1 },
+  { t: 7.35, mult: 2.8, gain: 1.1 },
+  { t: 9.35, mult: 2.8, gain: 1.1 },
+  { t: 9.6, mult: 2, gain: 0.5 },
+  { t: 9.8, mult: 2, gain: 1 },
+  { t: 11.5, mult: 3.3, gain: 1.15 },
+  { t: 13.5, mult: 3.3, gain: 1.15 },
+  { t: 13.75, mult: 2.5, gain: 0.5 },
+  { t: 13.95, mult: 2.5, gain: 1 },
+  { t: 15.65, mult: 3.8, gain: 1.2 },
+  { t: 17.65, mult: 3.8, gain: 1.2 },
+  { t: 17.9, mult: 3, gain: 0.5 },
+  { t: 18.1, mult: 3, gain: 1 },
+  { t: 19.8, mult: 4.3, gain: 1.25 },
+  { t: 21.8, mult: 4.3, gain: 1.25 },
+  { t: 22.05, mult: 3.5, gain: 0.5 },
+  { t: 22.25, mult: 3.5, gain: 1 },
+  { t: 24.25, mult: 4.8, gain: 1.3 },
+  { t: 26.25, mult: 4.8, gain: 1.3 },
+  { t: 29.05, mult: 1, gain: 0.85 },
+  { t: 29.85, mult: 1, gain: 0.85 },
+];
+const GEAR_CYCLE_DURATION = 29.85;
 
 function makeDistortionCurve(amount) {
   const samples = 256;
@@ -28,6 +63,9 @@ export class EngineSynth {
     this.noiseBuffer = null;
     this.nodes = null;
     this.running = false;
+    this.gearLoopTimer = null;
+    this.stopTimer = null;
+    this.baseFreqs = null;
   }
 
   ensureContext() {
@@ -40,6 +78,17 @@ export class EngineSynth {
     this.analyser.fftSize = 64;
     this.master.connect(this.analyser);
     this.analyser.connect(this.ctx.destination);
+  }
+
+  // Creates and resumes the AudioContext without building/starting any
+  // sound graph. Call this synchronously inside the click handler that
+  // starts the experience, even if this engine isn't the one about to
+  // play — browsers only allow an AudioContext to unlock inside a direct
+  // user-gesture call stack, and a later exhaust-pill switch that first
+  // touches this engine runs from a useEffect, not a click.
+  unlock() {
+    this.ensureContext();
+    if (this.ctx.state === "suspended") this.ctx.resume();
   }
 
   getNoiseBuffer() {
@@ -56,15 +105,35 @@ export class EngineSynth {
 
   buildGraph(cylinder, exhaust) {
     const ctx = this.ctx;
-    const { carrierFreq, pulseHz } = CYLINDER_PARAMS[cylinder];
-    const { cutoff, drive, noiseLevel } = EXHAUST_PARAMS[exhaust];
+    const { carrierFreq, subFreq, pulseHz, jitter } = CYLINDER_PARAMS[cylinder];
+    const { cutoff, drive, noiseLevel, crackle } = EXHAUST_PARAMS[exhaust];
 
+    // Main body tone
     const carrier = ctx.createOscillator();
     carrier.type = "sawtooth";
     carrier.frequency.value = carrierFreq;
 
+    // Sub-octave layer for low-end rumble
+    const sub = ctx.createOscillator();
+    sub.type = "sawtooth";
+    sub.frequency.value = subFreq;
+    const subGain = ctx.createGain();
+    subGain.gain.value = 0.35;
+    sub.connect(subGain);
+
+    // Slow random-ish detune so it doesn't sound perfectly mechanical
+    const jitterLfo = ctx.createOscillator();
+    jitterLfo.type = "sine";
+    jitterLfo.frequency.value = 0.7;
+    const jitterGain = ctx.createGain();
+    jitterGain.gain.value = jitter;
+    jitterLfo.connect(jitterGain);
+    jitterGain.connect(carrier.detune);
+    jitterGain.connect(sub.detune);
+
+    // Firing pulse — sawtooth (sharper stroke) instead of a smooth sine
     const pulse = ctx.createOscillator();
-    pulse.type = "sine";
+    pulse.type = "sawtooth";
     pulse.frequency.value = pulseHz;
 
     const pulseGain = ctx.createGain();
@@ -76,7 +145,9 @@ export class EngineSynth {
     pulse.connect(pulseGain);
     pulseGain.connect(carrierGain.gain);
     carrier.connect(carrierGain);
+    subGain.connect(carrierGain);
 
+    // Background exhaust hiss
     const noise = ctx.createBufferSource();
     noise.buffer = this.getNoiseBuffer();
     noise.loop = true;
@@ -85,6 +156,27 @@ export class EngineSynth {
     noiseGain.gain.value = noiseLevel;
     noise.connect(noiseGain);
 
+    // Exhaust crackle/pop — noise gated by the same firing pulse,
+    // filtered brighter than the main body so it reads as a "bark"
+    const crackleSource = ctx.createBufferSource();
+    crackleSource.buffer = this.getNoiseBuffer();
+    crackleSource.loop = true;
+
+    const crackleFilter = ctx.createBiquadFilter();
+    crackleFilter.type = "highpass";
+    crackleFilter.frequency.value = 1800;
+
+    const crackleGain = ctx.createGain();
+    crackleGain.gain.value = 0;
+
+    const crackleAmount = ctx.createGain();
+    crackleAmount.gain.value = crackle;
+    pulseGain.connect(crackleAmount);
+    crackleAmount.connect(crackleGain.gain);
+
+    crackleSource.connect(crackleFilter);
+    crackleFilter.connect(crackleGain);
+
     const filter = ctx.createBiquadFilter();
     filter.type = "lowpass";
     filter.frequency.value = cutoff;
@@ -92,34 +184,95 @@ export class EngineSynth {
     const shaper = ctx.createWaveShaper();
     shaper.curve = makeDistortionCurve(drive);
 
+    // RPM-linked loudness — separate from the master fade envelope so the
+    // gear cycle can swell/dip (and snap on each shift) independently.
+    const revGain = ctx.createGain();
+    revGain.gain.value = 0.85;
+
     carrierGain.connect(filter);
     noiseGain.connect(filter);
     filter.connect(shaper);
-    shaper.connect(this.master);
+    shaper.connect(revGain);
+    crackleGain.connect(revGain);
+    revGain.connect(this.master);
 
     carrier.start();
+    sub.start();
     pulse.start();
+    jitterLfo.start();
     noise.start();
+    crackleSource.start();
 
-    this.nodes = { carrier, pulse, noise };
+    this.nodes = { carrier, sub, pulse, jitterLfo, noise, crackleSource, revGain };
+    this.baseFreqs = { carrierFreq, subFreq, pulseHz };
+
+    // Stock exhaust just idles — the full rev/gear-shift cycle is reserved
+    // for the Race exhaust so it actually sounds different from Stock.
+    if (exhaust === "race") {
+      this.scheduleGearLoop();
+    }
+  }
+
+  scheduleGearLoop() {
+    if (!this.nodes || !this.baseFreqs) return;
+
+    const { carrier, sub, pulse, revGain } = this.nodes;
+    const { carrierFreq, subFreq, pulseHz } = this.baseFreqs;
+    const now = this.ctx.currentTime;
+
+    pulse.frequency.cancelScheduledValues(now);
+    carrier.frequency.cancelScheduledValues(now);
+    sub.frequency.cancelScheduledValues(now);
+    revGain.gain.cancelScheduledValues(now);
+
+    GEAR_CYCLE.forEach(({ t, mult, gain }) => {
+      const revFactor = 1 + (mult - 1) * 0.5;
+      pulse.frequency.linearRampToValueAtTime(pulseHz * mult, now + t);
+      carrier.frequency.linearRampToValueAtTime(carrierFreq * revFactor, now + t);
+      sub.frequency.linearRampToValueAtTime(subFreq * revFactor, now + t);
+      revGain.gain.linearRampToValueAtTime(gain, now + t);
+    });
+
+    this.gearLoopTimer = setTimeout(() => {
+      this.scheduleGearLoop();
+    }, GEAR_CYCLE_DURATION * 1000);
   }
 
   teardownGraph() {
+    if (this.gearLoopTimer) {
+      clearTimeout(this.gearLoopTimer);
+      this.gearLoopTimer = null;
+    }
+
     if (!this.nodes) return;
     Object.values(this.nodes).forEach((node) => {
       try {
-        node.stop();
-        node.disconnect();
+        if (typeof node.stop === "function") node.stop();
       } catch {
         // already stopped
       }
+      try {
+        node.disconnect();
+      } catch {
+        // already disconnected
+      }
     });
     this.nodes = null;
+    this.baseFreqs = null;
   }
 
   start(cylinder, exhaust) {
     this.ensureContext();
     if (this.ctx.state === "suspended") this.ctx.resume();
+
+    // A prior stop() may have a delayed teardown pending — left unchecked,
+    // it fires ~400ms into this new graph's life and silently kills it
+    // (exactly what happened switching exhaust types while running).
+    if (this.stopTimer) {
+      clearTimeout(this.stopTimer);
+      this.stopTimer = null;
+    }
+
     this.teardownGraph();
     this.buildGraph(cylinder, exhaust);
     this.master.gain.cancelScheduledValues(this.ctx.currentTime);
@@ -141,7 +294,12 @@ export class EngineSynth {
     this.master.gain.cancelScheduledValues(this.ctx.currentTime);
     this.master.gain.setTargetAtTime(0, this.ctx.currentTime, 0.12);
     this.running = false;
-    setTimeout(() => this.teardownGraph(), 400);
+
+    if (this.stopTimer) clearTimeout(this.stopTimer);
+    this.stopTimer = setTimeout(() => {
+      this.teardownGraph();
+      this.stopTimer = null;
+    }, 400);
   }
 
   getLevels() {

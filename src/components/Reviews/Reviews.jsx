@@ -140,31 +140,35 @@ function Reviews() {
         <p className={`review-feedback ${feedback.type}`}>{feedback.text}</p>
       )}
 
-      <div className="reviews-grid">
-        {!loading && reviews.length === 0 && (
-          <p className="no-reviews-msg">
-            No reviews yet — be the first to share your experience!
-          </p>
-        )}
+      {!loading && reviews.length === 0 && (
+        <p className="no-reviews-msg">
+          No reviews yet — be the first to share your experience!
+        </p>
+      )}
 
-        {reviews.map((item) => (
-          <div className="review-card" key={item.id}>
-            <div className="stars">
-              {[1, 2, 3, 4, 5].map((star) =>
-                star <= item.rating ? (
-                  <FaStar key={star} />
-                ) : (
-                  <FaRegStar key={star} />
-                )
-              )}
-            </div>
+      {reviews.length > 0 && (
+        <div className="reviews-marquee">
+          <div className="reviews-track">
+            {[...reviews, ...reviews].map((item, index) => (
+              <div className="review-card" key={`${item.id}-${index}`}>
+                <div className="stars">
+                  {[1, 2, 3, 4, 5].map((star) =>
+                    star <= item.rating ? (
+                      <FaStar key={star} />
+                    ) : (
+                      <FaRegStar key={star} />
+                    )
+                  )}
+                </div>
 
-            <p className="review-text">"{item.message}"</p>
+                <p className="review-text">"{item.message}"</p>
 
-            <h3>{item.name}</h3>
+                <h3>{item.name}</h3>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </section>
   );
 }

@@ -6,33 +6,32 @@ import "./Accessories.css";
 import OptimizedImage from "../common/OptimizedImage/OptimizedImage";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
 import LoginModal from "../Auth/LoginModal";
-
-const bikes = [
-  "125 Duke",
-  "200 Duke",
-  "250 Duke",
-  "390 Duke",
-  "RC 200",
-  "RC 390",
-  "250 Adventure",
-  "390 Adventure",
-  "390 Adventure X",
-  "390 Enduro R",
-  "790 Duke",
-  "890 Duke R",
-  "1290 Super Duke R",
-];
+import { BIKE_BRANDS, KTM_FAMILIES } from "../../constants/bikes";
 
 function Accessories() {
+  const [selectedBrand, setSelectedBrand] = useState(null);
+  const [selectedFamily, setSelectedFamily] = useState(null);
   const [selectedBike, setSelectedBike] = useState(null);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+  const [availability, setAvailability] = useState("All");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
 
   const { customer, isFavorite, toggleFavorite } = useCustomerAuth();
+
+  const isKtm = selectedBrand === "KTM";
+  const brandModels = selectedBrand
+    ? BIKE_BRANDS.find((b) => b.brand === selectedBrand)?.models || []
+    : [];
+
+  const resetBikeSelection = () => {
+    setSelectedBrand(null);
+    setSelectedFamily(null);
+    setSelectedBike(null);
+  };
 
   const handleFavoriteClick = (e, item) => {
     e.stopPropagation();
@@ -75,46 +74,106 @@ function Accessories() {
       .toLowerCase()
       .includes(search.toLowerCase());
 
-    return matchesCategory && matchesSearch;
+    const matchesAvailability =
+      availability === "All" ||
+      (availability === "In Stock" ? item.stock > 0 : item.stock <= 0);
+
+    return matchesCategory && matchesSearch && matchesAvailability;
   });
 
   const enquiryMessage = (product) =>
     encodeURIComponent(
-      `Hi R24 Automotive 👋 I'm interested in ${product.name} for my KTM ${selectedBike}. Please share more details.`
+      `Hi R24 Automotive 👋 I'm interested in ${product.name} for my ${selectedBrand} ${selectedBike}. Please share more details.`
     );
 
   return (
     <section className="accessories-page" id="accessories">
       <div className="section-heading">
         <span className="section-tag">Accessories</span>
-        <h2>Genuine KTM Spare Parts & Accessories</h2>
+        <h2>Genuine Spare Parts & Accessories</h2>
         <p>
-          Select your bike to browse only genuine KTM parts and accessories
-          available for it.
+          Select your bike to browse genuine parts and accessories available
+          for it.
         </p>
       </div>
 
-      <div className="bike-select-grid">
-        {bikes.map((bike) => (
+      {!selectedBrand ? (
+        <div className="bike-select-grid">
+          {BIKE_BRANDS.map((b) => (
+            <button
+              key={b.brand}
+              className="bike-select-card"
+              onClick={() => setSelectedBrand(b.brand)}
+            >
+              {b.brand}
+            </button>
+          ))}
+        </div>
+      ) : isKtm && !selectedFamily ? (
+        <div className="bike-select-grid">
           <button
-            key={bike}
-            className={
-              selectedBike === bike
-                ? "bike-select-card active"
-                : "bike-select-card"
-            }
-            onClick={() => setSelectedBike(bike)}
+            className="bike-select-back"
+            onClick={() => setSelectedBrand(null)}
           >
-            {bike}
+            ← Back to brands
           </button>
-        ))}
-      </div>
-
-      {selectedBike && (
+          {KTM_FAMILIES.map((f) => (
+            <button
+              key={f.family}
+              className="bike-select-card"
+              onClick={() => setSelectedFamily(f)}
+            >
+              {f.family}
+            </button>
+          ))}
+        </div>
+      ) : isKtm && !selectedBike ? (
+        <div className="bike-select-grid">
+          <button
+            className="bike-select-back"
+            onClick={() => setSelectedFamily(null)}
+          >
+            ← Back to models
+          </button>
+          {selectedFamily.variants.map((v) => (
+            <button
+              key={v.model}
+              className="bike-select-card"
+              onClick={() => setSelectedBike(v.model)}
+            >
+              {v.cc} cc
+            </button>
+          ))}
+        </div>
+      ) : !isKtm && !selectedBike ? (
+        <div className="bike-select-grid">
+          <button
+            className="bike-select-back"
+            onClick={() => setSelectedBrand(null)}
+          >
+            ← Back to brands
+          </button>
+          {brandModels.map((m) => (
+            <button
+              key={m}
+              className="bike-select-card"
+              onClick={() => setSelectedBike(m)}
+            >
+              {m}
+            </button>
+          ))}
+        </div>
+      ) : (
         <div className="accessories-catalog">
           <p className="catalog-note">
-            Showing genuine KTM parts & accessories for your{" "}
-            <strong>KTM {selectedBike}</strong>.
+            Showing genuine parts & accessories for your{" "}
+            <strong>
+              {selectedBrand} {selectedBike}
+            </strong>
+            .{" "}
+            <button className="bike-select-back" onClick={resetBikeSelection}>
+              Change Bike
+            </button>
           </p>
 
           <div className="search-box">
@@ -143,6 +202,20 @@ function Accessories() {
                 {cat.name}
               </button>
             ))}
+          </div>
+
+          <div className="filter-toolbar">
+            <div className="availability-buttons">
+              {["All", "In Stock", "Out of Stock"].map((label) => (
+                <button
+                  key={label}
+                  className={availability === label ? "active" : ""}
+                  onClick={() => setAvailability(label)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="products-grid">
@@ -182,7 +255,6 @@ function Accessories() {
                 <div className="product-content">
                   <span>{item.category?.name}</span>
                   <h3>{item.name}</h3>
-                  <h4>₹ {item.price}</h4>
 
                   <button
                     className="details-btn"
@@ -253,7 +325,6 @@ function Accessories() {
               </span>
 
               <h2>{selectedProduct.name}</h2>
-              <h3>₹ {selectedProduct.price}</h3>
               <p>{selectedProduct.description}</p>
 
               <ul className="popup-features">

@@ -21,7 +21,7 @@ function Gallery() {
   const loadGallery = async () => {
     try {
       const res = await api.get("/gallery");
-      setComparisons(res.data);
+      setComparisons(res.data.filter((item) => item.active !== false));
     } catch (error) {
       console.error("Error loading gallery:", error);
     }
@@ -42,53 +42,57 @@ function Gallery() {
         </p>
       </div>
 
-      <div className="comparison-grid">
-        {comparisons.map((item) => (
-          <div
-            className="comparison-card"
-            key={item.id}
-            onClick={() => setSelectedItem(item)}
-          >
-            <div className="card-header">
-              <h3>{item.title}</h3>
-            </div>
+      {comparisons.length > 0 && (
+        <div className="before-after-marquee">
+          <div className="before-after-track">
+            {[...comparisons, ...comparisons].map((item, index) => (
+              <div
+                className="comparison-card"
+                key={`${item.id}-${index}`}
+                onClick={() => setSelectedItem(item)}
+              >
+                <div className="card-header">
+                  <h3>{item.title}</h3>
+                </div>
 
-            <div className="images-wrapper">
-              <div className="image-box before">
-                {item.beforeImageUrl ? (
-                  <OptimizedImage
-                    src={item.beforeImageUrl}
-                    width={400}
-                    alt={`${item.title} - Before`}
-                  />
-                ) : (
-                  <div className="placeholder">Before Image</div>
-                )}
+                <div className="images-wrapper">
+                  <div className="image-box before">
+                    {item.beforeImageUrl ? (
+                      <OptimizedImage
+                        src={item.beforeImageUrl}
+                        width={400}
+                        alt={`${item.title} - Before`}
+                      />
+                    ) : (
+                      <div className="placeholder">Before Image</div>
+                    )}
+                  </div>
+
+                  <div className="arrow">
+                    <FaArrowRight />
+                  </div>
+
+                  <div className="image-box after">
+                    {item.afterImageUrl ? (
+                      <OptimizedImage
+                        src={item.afterImageUrl}
+                        width={400}
+                        alt={`${item.title} - After`}
+                      />
+                    ) : (
+                      <div className="placeholder">After Image</div>
+                    )}
+                  </div>
+                </div>
+
+                <p className="card-caption">
+                  {truncate(item.description || DEFAULT_DESCRIPTION, 70)}
+                </p>
               </div>
-
-              <div className="arrow">
-                <FaArrowRight />
-              </div>
-
-              <div className="image-box after">
-                {item.afterImageUrl ? (
-                  <OptimizedImage
-                    src={item.afterImageUrl}
-                    width={400}
-                    alt={`${item.title} - After`}
-                  />
-                ) : (
-                  <div className="placeholder">After Image</div>
-                )}
-              </div>
-            </div>
-
-            <p className="card-caption">
-              {truncate(item.description || DEFAULT_DESCRIPTION, 70)}
-            </p>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      )}
 
       {selectedItem && (
         <div
@@ -108,22 +112,30 @@ function Gallery() {
 
             <div className="gallery-popup-images">
               <div className="gallery-popup-image-box">
-                <OptimizedImage
-                  src={selectedItem.beforeImageUrl}
-                  width={700}
-                  alt={`${selectedItem.title} - Before`}
-                  eager
-                />
+                {selectedItem.beforeImageUrl ? (
+                  <OptimizedImage
+                    src={selectedItem.beforeImageUrl}
+                    width={700}
+                    alt={`${selectedItem.title} - Before`}
+                    eager
+                  />
+                ) : (
+                  <div className="placeholder">Before Image</div>
+                )}
                 <span className="gallery-popup-label before">Before</span>
               </div>
 
               <div className="gallery-popup-image-box">
-                <OptimizedImage
-                  src={selectedItem.afterImageUrl}
-                  width={700}
-                  alt={`${selectedItem.title} - After`}
-                  eager
-                />
+                {selectedItem.afterImageUrl ? (
+                  <OptimizedImage
+                    src={selectedItem.afterImageUrl}
+                    width={700}
+                    alt={`${selectedItem.title} - After`}
+                    eager
+                  />
+                ) : (
+                  <div className="placeholder">After Image</div>
+                )}
                 <span className="gallery-popup-label after">After</span>
               </div>
             </div>

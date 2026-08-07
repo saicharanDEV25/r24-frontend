@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { FaUserCircle, FaClipboardList, FaHeart, FaTrash, FaMotorcycle } from "react-icons/fa";
+import { FaUserCircle, FaHeart, FaTrash, FaMotorcycle } from "react-icons/fa";
 import Navbar from "../../components/Layout/Navbar/Navbar";
 import Footer from "../../components/Layout/Footer/Footer";
 import LoginModal from "../../components/Auth/LoginModal";
 import OptimizedImage from "../../components/common/OptimizedImage/OptimizedImage";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
-import { KTM_BIKES } from "../../constants/bikes";
+import { BIKE_BRANDS } from "../../constants/bikes";
 import api from "../../services/api";
 import "./ProfilePage.css";
 
@@ -45,7 +45,6 @@ function ProfilePage() {
   const [saveMsg, setSaveMsg] = useState("");
 
   const [bookings, setBookings] = useState([]);
-  const [bookingsLoading, setBookingsLoading] = useState(false);
 
   const [bikeModel, setBikeModel] = useState(customer?.bikeModel || "");
   const [purchaseYear, setPurchaseYear] = useState(customer?.purchaseYear || "");
@@ -63,18 +62,15 @@ function ProfilePage() {
 
   const loadBookings = async () => {
     try {
-      setBookingsLoading(true);
       const res = await api.get("/bookings/my");
       setBookings(res.data);
     } catch (error) {
       console.error("Error loading bookings:", error);
-    } finally {
-      setBookingsLoading(false);
     }
   };
 
   useEffect(() => {
-    if (customer && (activeTab === "bookings" || activeTab === "garage")) {
+    if (customer && activeTab === "garage") {
       loadBookings();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -165,12 +161,6 @@ function ProfilePage() {
             <FaMotorcycle /> My Garage
           </button>
           <button
-            className={activeTab === "bookings" ? "active" : ""}
-            onClick={() => setSearchParams({ tab: "bookings" })}
-          >
-            <FaClipboardList /> My Bookings
-          </button>
-          <button
             className={activeTab === "favorites" ? "active" : ""}
             onClick={() => setSearchParams({ tab: "favorites" })}
           >
@@ -225,10 +215,14 @@ function ProfilePage() {
                     required
                   >
                     <option value="">Select your bike</option>
-                    {KTM_BIKES.map((bike) => (
-                      <option key={bike} value={bike}>
-                        {bike}
-                      </option>
+                    {BIKE_BRANDS.map((group) => (
+                      <optgroup key={group.brand} label={group.brand}>
+                        {group.models.map((bike) => (
+                          <option key={bike} value={bike}>
+                            {bike}
+                          </option>
+                        ))}
+                      </optgroup>
                     ))}
                   </select>
                 </label>
@@ -314,49 +308,12 @@ function ProfilePage() {
                     <span className="garage-stat-value">{favorites.length} saved</span>
                   </button>
 
-                  <button
-                    className="garage-stat garage-stat-link"
-                    onClick={() => setSearchParams({ tab: "bookings" })}
-                  >
+                  <div className="garage-stat">
                     <span className="garage-stat-label">Service History</span>
                     <span className="garage-stat-value">{bookings.length} bookings</span>
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {activeTab === "bookings" && (
-          <div className="profile-bookings">
-            {bookingsLoading ? (
-              <p className="profile-empty">Loading...</p>
-            ) : bookings.length === 0 ? (
-              <div className="profile-empty">
-                <p>No bookings yet.</p>
-                <a
-                  href="https://wa.me/918309560622?text=Hello%20R24%20Automotive%20%F0%9F%91%8B%20I%20want%20to%20book%20a%20service."
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Book a Service on WhatsApp
-                </a>
-              </div>
-            ) : (
-              bookings.map((b) => (
-                <div className="booking-card" key={b.id}>
-                  <div>
-                    <h4>{b.serviceType}</h4>
-                    <p>
-                      {b.bikeModel} &middot; {b.bookingDate}{" "}
-                      {b.bookingTime && `at ${b.bookingTime}`}
-                    </p>
                   </div>
-                  <span className={`booking-status ${b.status?.toLowerCase()}`}>
-                    {b.status}
-                  </span>
                 </div>
-              ))
+              </div>
             )}
           </div>
         )}
@@ -380,7 +337,6 @@ function ProfilePage() {
                     />
                     <div className="favorite-card-info">
                       <h4>{product.name}</h4>
-                      <span>₹ {product.price}</span>
                     </div>
                     <button
                       className="favorite-remove-btn"

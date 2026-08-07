@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FaPowerOff, FaVolumeMute } from "react-icons/fa";
 import { EngineSynth } from "../../utils/engineSynth";
+import { EnginePlayer } from "../../utils/enginePlayer";
 import "./EngineExperience.css";
 
 const CYLINDER_OPTIONS = [
@@ -24,25 +25,51 @@ function EngineExperience() {
   const [levels, setLevels] = useState(new Array(BAR_COUNT).fill(4));
 
   const synthRef = useRef(null);
+  const playerRef = useRef(null);
+  const exhaustRef = useRef(exhaust);
   const rafRef = useRef(null);
 
   useEffect(() => {
     synthRef.current = new EngineSynth();
+    playerRef.current = new EnginePlayer("/audio/engine-sound.mp3");
     return () => {
       cancelAnimationFrame(rafRef.current);
       synthRef.current?.stop();
+      playerRef.current?.stop();
     };
   }, []);
 
   useEffect(() => {
-    if (running) {
-      synthRef.current.updateParams(cylinder, exhaust);
+    exhaustRef.current = exhaust;
+  }, [exhaust]);
+
+  useEffect(() => {
+    if (!running) return;
+
+    synthRef.current.stop();
+    playerRef.current.stop();
+
+    if (exhaust === "akrapovic") {
+      playerRef.current.start().catch(() => setAudioBlocked(true));
+    } else {
+      synthRef.current.start(cylinder, exhaust);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cylinder, exhaust]);
+  }, [exhaust]);
+
+  useEffect(() => {
+    // Cylinder only affects the synthesized engine — switching it while
+    // Akrapovič (real audio) is playing shouldn't restart that recording.
+    if (!running || exhaust === "akrapovic") return;
+
+    synthRef.current.start(cylinder, exhaust);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cylinder]);
 
   const animate = () => {
-    const data = synthRef.current?.getLevels();
+    const engine =
+      exhaustRef.current === "akrapovic" ? playerRef.current : synthRef.current;
+    const data = engine?.getLevels();
     if (data) {
       const step = Math.floor(data.length / BAR_COUNT) || 1;
       const bars = new Array(BAR_COUNT)
@@ -53,10 +80,20 @@ function EngineExperience() {
     rafRef.current = requestAnimationFrame(animate);
   };
 
-  const toggleEngine = () => {
+  const toggleEngine = async () => {
     if (!running) {
       try {
-        synthRef.current.start(cylinder, exhaust);
+        // Unlock both engines' AudioContexts here, inside the click — a
+        // later switch to whichever exhaust isn't playing yet happens from
+        // a useEffect, which browsers won't treat as a user gesture.
+        synthRef.current.unlock();
+        playerRef.current.unlock();
+
+        if (exhaust === "akrapovic") {
+          await playerRef.current.start();
+        } else {
+          synthRef.current.start(cylinder, exhaust);
+        }
         setAudioBlocked(false);
         setRunning(true);
         rafRef.current = requestAnimationFrame(animate);
@@ -65,6 +102,7 @@ function EngineExperience() {
       }
     } else {
       synthRef.current.stop();
+      playerRef.current.stop();
       setRunning(false);
       cancelAnimationFrame(rafRef.current);
       setLevels(new Array(BAR_COUNT).fill(4));

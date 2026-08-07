@@ -72,6 +72,22 @@
   animation: card-fade-up 0.5s ease both;
 }
 
+.bike-select-back {
+  grid-column: 1 / -1;
+  background: none;
+  border: none;
+  color: #ffd000;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  padding: 4px 0 10px;
+  width: fit-content;
+}
+
+.bike-select-back:hover {
+  text-decoration: underline;
+}
+
 @keyframes card-fade-up {
   from {
     opacity: 0;
