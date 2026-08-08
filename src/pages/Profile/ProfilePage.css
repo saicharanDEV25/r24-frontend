@@ -184,7 +184,11 @@
   max-width: 1100px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  /* Capped (not 1fr) so card size stays consistent regardless of how many
+     favorites there are — with 1fr a single favorite would stretch to
+     fill the whole row width instead of staying a normal card size. */
+  grid-template-columns: repeat(auto-fit, minmax(220px, 260px));
+  justify-content: center;
   gap: 24px;
 }
 
@@ -194,6 +198,8 @@
   border-radius: 16px;
   overflow: hidden;
   transition: 0.3s ease;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .favorite-card:hover {

@@ -35,6 +35,8 @@
     padding:35px 28px;
     text-align:center;
     transition:.35s ease;
+    height:100%;
+    box-sizing:border-box;
 }
 
 .why-card:hover{

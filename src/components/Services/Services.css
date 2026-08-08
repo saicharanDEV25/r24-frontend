@@ -28,6 +28,8 @@
     cursor:pointer;
     position:relative;
     overflow:hidden;
+    height:100%;
+    box-sizing:border-box;
 }
 
 .service-card::before{
