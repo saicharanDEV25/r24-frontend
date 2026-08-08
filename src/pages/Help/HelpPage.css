@@ -108,11 +108,30 @@
     padding: 110px 20px 60px;
   }
 
+  .help-heading {
+    margin-bottom: 30px;
+  }
+
   .help-heading h2 {
-    font-size: 30px;
+    font-size: 26px;
+  }
+
+  .help-heading p {
+    font-size: 13.5px;
   }
 
   .help-contact-row {
     grid-template-columns: 1fr;
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+
+  .help-contact-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .help-contact-card svg {
+    font-size: 24px;
   }
 }

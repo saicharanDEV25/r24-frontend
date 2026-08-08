@@ -5,11 +5,15 @@ import api from "../../services/api";
 import { BIKE_BRANDS, KTM_FAMILIES } from "../../constants/bikes";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
 
+const isRealPhoneNumber = (value) => /^[6-9]\d{9}$/.test(value || "");
+
 function BookingModal({ serviceType, onClose }) {
   const { customer, updateCustomer } = useCustomerAuth();
 
   const [name, setName] = useState(customer?.name || "");
-  const [phone, setPhone] = useState(customer?.phoneNumber || "");
+  const [phone, setPhone] = useState(
+    isRealPhoneNumber(customer?.phoneNumber) ? customer.phoneNumber : ""
+  );
   const [bikeModel, setBikeModel] = useState(customer?.bikeModel || "");
   const [bikeBrand, setBikeBrand] = useState(null);
   const [bikeFamily, setBikeFamily] = useState(null);

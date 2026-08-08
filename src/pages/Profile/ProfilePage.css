@@ -200,27 +200,41 @@
   transition: 0.3s ease;
   height: 100%;
   box-sizing: border-box;
+  cursor: pointer;
 }
 
 .favorite-card:hover {
   border-color: #ffd000;
   transform: translateY(-6px);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.4);
 }
 
-.favorite-card img {
+.favorite-card-media {
+  position: relative;
+}
+
+.favorite-card-img.optimized-image-wrapper {
   width: 100%;
+  height: auto;
   aspect-ratio: 1 / 1;
+}
+
+.favorite-card-img img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 .favorite-card-info {
-  padding: 16px;
+  padding: 14px 16px 18px;
 }
 
 .favorite-card-info h4 {
   color: #fff;
   font-size: 15px;
-  margin-bottom: 6px;
+  font-weight: 600;
+  line-height: 1.35;
 }
 
 .favorite-card-info span {
@@ -230,23 +244,30 @@
 }
 
 .favorite-remove-btn {
-  width: 100%;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  background: rgba(231, 76, 60, 0.1);
-  color: #e74c3c;
-  border: none;
-  padding: 12px;
-  font-size: 13px;
-  font-weight: 600;
-  transition: 0.3s;
+  background: rgba(10, 10, 10, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  transition: 0.25s ease;
 }
 
 .favorite-remove-btn:hover {
   background: #e74c3c;
+  border-color: #e74c3c;
   color: #fff;
+  transform: scale(1.08);
 }
 
 /* ---------- Empty state ---------- */
@@ -445,5 +466,24 @@
 
   .profile-heading h2 {
     font-size: 28px;
+  }
+
+  .favorites-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .favorite-card-info {
+    padding: 12px 12px 14px;
+  }
+
+  .favorite-card-info h4 {
+    font-size: 13px;
+  }
+
+  .favorite-remove-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
   }
 }

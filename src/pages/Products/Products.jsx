@@ -3,6 +3,7 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import api from "../../services/api";
 import "./Product.css";
 import OptimizedImage from "../../components/common/OptimizedImage/OptimizedImage";
+import ProductPopup from "../../components/common/ProductPopup/ProductPopup";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
 import Navbar from "../../components/Layout/Navbar/Navbar";
 import Footer from "../../components/Layout/Footer/Footer";
@@ -47,7 +48,6 @@ function Products() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [availability, setAvailability] = useState("All");
-  const [sortBy, setSortBy] = useState("default");
 
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -97,31 +97,24 @@ function Products() {
     categoryCounts[label] = (categoryCounts[label] || 0) + 1;
   });
 
-  const filteredProducts = products
-    .filter((item) => {
+  const filteredProducts = products.filter((item) => {
 
-      const matchesCategory =
-        category === "All" ||
-        getGroupLabel(item.category?.name) === category;
+    const matchesCategory =
+      category === "All" ||
+      getGroupLabel(item.category?.name) === category;
 
-      const matchesSearch =
-        (item.name || "")
-          .toLowerCase()
-          .includes(search.toLowerCase());
+    const matchesSearch =
+      (item.name || "")
+        .toLowerCase()
+        .includes(search.toLowerCase());
 
-      const matchesAvailability =
-        availability === "All" ||
-        (availability === "In Stock" ? item.stock > 0 : item.stock <= 0);
+    const matchesAvailability =
+      availability === "All" ||
+      (availability === "In Stock" ? item.stock > 0 : item.stock <= 0);
 
-      return matchesCategory && matchesSearch && matchesAvailability;
+    return matchesCategory && matchesSearch && matchesAvailability;
 
-    })
-    .sort((a, b) => {
-      if (sortBy === "nameAZ") return (a.name || "").localeCompare(b.name || "");
-      if (sortBy === "newest") return (b.id || 0) - (a.id || 0);
-      if (sortBy === "oldest") return (a.id || 0) - (b.id || 0);
-      return 0;
-    });
+  });
 
   return (
 
@@ -181,17 +174,6 @@ function Products() {
               </button>
             ))}
           </div>
-
-          <select
-            className="sort-select"
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-          >
-            <option value="default">Sort: Default</option>
-            <option value="nameAZ">Name: A-Z</option>
-            <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
-          </select>
 
         </div>
 
@@ -268,86 +250,13 @@ function Products() {
         </div>
 
       </section>
-            {selectedProduct && (
 
-        <div
-          className="popup-overlay"
-          onClick={() => setSelectedProduct(null)}
-        >
-
-          <div
-            className="product-popup"
-            onClick={(e) => e.stopPropagation()}
-          >
-
-            <button
-              className="close-popup"
-              onClick={() => setSelectedProduct(null)}
-            >
-              ✕
-            </button>
-
-            <div className="product-image-wrap">
-              <OptimizedImage
-                src={selectedProduct.imageUrl}
-                width={700}
-                alt={selectedProduct.name}
-                eager
-                fallbackSrc="https://placehold.co/500x500?text=No+Image"
-              />
-
-              <button
-                className="favorite-btn"
-                onClick={(e) => handleFavoriteClick(e, selectedProduct)}
-                aria-label="Save to favorites"
-              >
-                {isFavorite(selectedProduct.id) ? <FaHeart /> : <FaRegHeart />}
-              </button>
-            </div>
-
-            <div className="popup-content">
-
-              <span className="popup-category">
-                {selectedProduct.category?.name}
-              </span>
-
-              <span
-                className={
-                  selectedProduct.stock > 0
-                    ? "stock-badge in-stock popup-stock-badge"
-                    : "stock-badge out-of-stock popup-stock-badge"
-                }
-              >
-                {selectedProduct.stock > 0 ? "In Stock" : "Out of Stock"}
-              </span>
-
-              <h2>{selectedProduct.name}</h2>
-
-              <p>{selectedProduct.description}</p>
-
-              <ul className="popup-features">
-                <li>✔ Premium Quality Product</li>
-                <li>✔ Genuine KTM Compatible</li>
-                <li>✔ Professional Installation Available</li>
-                <li>✔ Warranty Support Available</li>
-              </ul>
-
-              <a
-                href={`https://wa.me/918309560622?text=Hi R24 Automotive 👋 I'm interested in ${selectedProduct.name}. Please share more details.`}
-                target="_blank"
-                rel="noreferrer"
-                className="popup-btn"
-              >
-                Enquire on WhatsApp
-              </a>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      )}
+      <ProductPopup
+        product={selectedProduct}
+        isFavorite={isFavorite}
+        onToggleFavorite={toggleFavorite}
+        onClose={() => setSelectedProduct(null)}
+      />
 
       <Footer />
 

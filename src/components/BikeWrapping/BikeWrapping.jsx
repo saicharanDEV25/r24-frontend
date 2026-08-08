@@ -75,10 +75,17 @@ const wrapTypes = [
 
 function BikeWrapping() {
   const [selectedWrap, setSelectedWrap] = useState(wrapTypes[0]);
+  const [previewWrap, setPreviewWrap] = useState(null);
 
   const whatsappMessage = encodeURIComponent(
     `Hello R24 Automotive 👋 I'm interested in a "${selectedWrap.name}" for my KTM. Please share pricing and design options.`
   );
+
+  const previewWhatsappMessage = previewWrap
+    ? encodeURIComponent(
+        `Hello R24 Automotive 👋 I'm interested in a "${previewWrap.name}" for my KTM. Please share pricing and design options.`
+      )
+    : "";
 
   return (
     <section className="bike-wrapping" id="bike-wrapping">
@@ -113,7 +120,10 @@ function BikeWrapping() {
                   ? "wrap-type-card active"
                   : "wrap-type-card"
               }
-              onClick={() => setSelectedWrap(wrap)}
+              onClick={() => {
+                setSelectedWrap(wrap);
+                setPreviewWrap(wrap);
+              }}
             >
               <span className={`wrap-swatch swatch-${wrap.id}`} />
               <span className="wrap-type-info">
@@ -133,6 +143,33 @@ function BikeWrapping() {
           Enquire About {selectedWrap.name}
         </a>
       </div>
+
+      {previewWrap && (
+        <div className="wrap-popup-overlay" onClick={() => setPreviewWrap(null)}>
+          <div className="wrap-popup" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="wrap-popup-close"
+              onClick={() => setPreviewWrap(null)}
+            >
+              ✕
+            </button>
+
+            <span className={`wrap-popup-swatch swatch-${previewWrap.id}`} />
+
+            <h3>{previewWrap.name}</h3>
+            <p>{previewWrap.desc}</p>
+
+            <a
+              href={`https://wa.me/918309560622?text=${previewWhatsappMessage}`}
+              target="_blank"
+              rel="noreferrer"
+              className="wrap-popup-btn"
+            >
+              Enquire on WhatsApp
+            </a>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

@@ -267,6 +267,105 @@
   background: repeating-linear-gradient(30deg, #111 0 10px, #ffd000 10px 20px);
 }
 
+/* ---------- Wrap type preview popup ---------- */
+
+.wrap-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 20px;
+  animation: wrap-popup-fade 0.3s ease;
+}
+
+@keyframes wrap-popup-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.wrap-popup {
+  width: 100%;
+  max-width: 340px;
+  background: #151515;
+  border: 1px solid rgba(255, 208, 0, 0.2);
+  border-radius: 20px;
+  padding: 28px 24px;
+  text-align: center;
+  position: relative;
+  animation: wrap-popup-scale 0.3s ease;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes wrap-popup-scale {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.wrap-popup-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: #ffd000;
+  color: #111;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.wrap-popup-close:hover {
+  transform: rotate(90deg);
+}
+
+.wrap-popup-swatch {
+  display: block;
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 18px;
+  border-radius: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.wrap-popup h3 {
+  color: #fff;
+  font-size: 19px;
+  margin-bottom: 10px;
+}
+
+.wrap-popup p {
+  color: #b5b5b5;
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin-bottom: 22px;
+}
+
+.wrap-popup-btn {
+  display: block;
+  background: #ffd000;
+  color: #111;
+  padding: 13px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.wrap-popup-btn:hover {
+  background: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(255, 208, 0, 0.3);
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 768px) {
@@ -284,12 +383,79 @@
     padding: 55px 14px;
   }
 
+  .bike-wrapping .section-heading {
+    margin-bottom: 30px;
+  }
+
+  .wrap-benefits {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .wrap-benefit-card {
+    padding: 16px 12px;
+  }
+
+  .wrap-benefit-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .wrap-benefit-card h4 {
+    font-size: 13.5px;
+    margin-bottom: 6px;
+  }
+
+  .wrap-benefit-card p {
+    font-size: 11.5px;
+    line-height: 1.5;
+  }
+
+  .wrap-type-list h4 {
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+
+  .wrap-type-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
   .wrap-type-card {
-    padding: 12px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    padding: 14px 10px;
+  }
+
+  .wrap-type-card:hover {
+    transform: translateY(-3px);
   }
 
   .wrap-swatch {
-    width: 46px;
-    height: 46px;
+    width: 42px;
+    height: 42px;
+  }
+
+  .wrap-type-info {
+    align-items: center;
+  }
+
+  .wrap-type-info strong {
+    font-size: 13px;
+  }
+
+  .wrap-type-desc {
+    font-size: 10.5px;
+    line-height: 1.4;
+  }
+
+  .wrap-enquiry-btn {
+    font-size: 14px;
   }
 }

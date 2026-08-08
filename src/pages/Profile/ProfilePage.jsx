@@ -4,6 +4,7 @@ import { FaUserCircle, FaHeart, FaTrash, FaMotorcycle } from "react-icons/fa";
 import Navbar from "../../components/Layout/Navbar/Navbar";
 import Footer from "../../components/Layout/Footer/Footer";
 import OptimizedImage from "../../components/common/OptimizedImage/OptimizedImage";
+import ProductPopup from "../../components/common/ProductPopup/ProductPopup";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
 import { BIKE_BRANDS } from "../../constants/bikes";
 import api from "../../services/api";
@@ -30,11 +31,13 @@ function formatDate(dateStr) {
 }
 
 function ProfilePage() {
-  const { customer, updateCustomer, favorites, toggleFavorite } =
+  const { customer, updateCustomer, favorites, toggleFavorite, isFavorite } =
     useCustomerAuth();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "info";
+
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const [name, setName] = useState(customer?.name || "");
   const [email, setEmail] = useState(customer?.email || "");
@@ -138,7 +141,6 @@ function ProfilePage() {
       <section className="profile-page">
         <div className="profile-heading">
           <h2>My Account</h2>
-          {customer.phoneNumber && <p>+91 {customer.phoneNumber}</p>}
         </div>
 
         <div className="profile-tabs">
@@ -181,15 +183,6 @@ function ProfilePage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Your email (optional)"
-              />
-            </label>
-
-            <label>
-              Mobile Number
-              <input
-                type="text"
-                value={customer.phoneNumber || "Not provided yet — book a service to add one"}
-                disabled
               />
             </label>
 
@@ -326,22 +319,34 @@ function ProfilePage() {
             ) : (
               <div className="favorites-grid">
                 {favorites.map((product) => (
-                  <div className="favorite-card" key={product.id}>
-                    <OptimizedImage
-                      src={product.imageUrl}
-                      width={300}
-                      alt={product.name}
-                      fallbackSrc="https://placehold.co/300x300?text=No+Image"
-                    />
+                  <div
+                    className="favorite-card"
+                    key={product.id}
+                    onClick={() => setSelectedProduct(product)}
+                  >
+                    <div className="favorite-card-media">
+                      <OptimizedImage
+                        src={product.imageUrl}
+                        width={300}
+                        alt={product.name}
+                        wrapperClassName="favorite-card-img"
+                        fallbackSrc="https://placehold.co/300x300?text=No+Image"
+                      />
+                      <button
+                        className="favorite-remove-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFavorite(product);
+                        }}
+                        aria-label="Remove from favorites"
+                        title="Remove from favorites"
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
                     <div className="favorite-card-info">
                       <h4>{product.name}</h4>
                     </div>
-                    <button
-                      className="favorite-remove-btn"
-                      onClick={() => toggleFavorite(product)}
-                    >
-                      <FaTrash /> Remove
-                    </button>
                   </div>
                 ))}
               </div>
@@ -349,6 +354,14 @@ function ProfilePage() {
           </div>
         )}
       </section>
+
+      <ProductPopup
+        product={selectedProduct}
+        isFavorite={isFavorite}
+        onToggleFavorite={toggleFavorite}
+        onClose={() => setSelectedProduct(null)}
+      />
+
       <Footer />
     </>
   );

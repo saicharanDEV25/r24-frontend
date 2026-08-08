@@ -97,42 +97,42 @@ function Contact() {
         <ScrollReveal className="contact-info" y={30}>
 
           <div className="info-item">
-            <FaPhoneAlt className="icon" />
-            <div>
+            <div className="info-item-heading">
+              <FaPhoneAlt className="icon" />
               <h3>Call Us</h3>
-              <p>
-                <a href="tel:+918309560622" className="info-link-btn">
-                  +91 83095 60622
-                </a>
-              </p>
             </div>
-          </div>
-
-          <div className="info-item">
-            <FaMapMarkerAlt className="icon" />
-            <div>
-              <h3>Location</h3>
-              <p className="info-address">
-                R24 Automotive, Vardhannapeta,<br />
-                Warangal, Telangana
-              </p>
-              <a
-                href="https://www.google.com/maps?q=R24+Automotive,+Vardhannapeta,+Warangal,+Telangana"
-                target="_blank"
-                rel="noreferrer"
-                className="info-link-btn"
-              >
-                Get Directions
+            <p>
+              <a href="tel:+918309560622" className="info-link-btn">
+                +91 83095 60622
               </a>
-            </div>
+            </p>
           </div>
 
           <div className="info-item">
-            <FaClock className="icon" />
-            <div>
-              <h3>Working Hours</h3>
-              <p>Monday - Sunday<br />9:00 AM - 9:00 PM</p>
+            <div className="info-item-heading">
+              <FaMapMarkerAlt className="icon" />
+              <h3>Location</h3>
             </div>
+            <p className="info-address">
+              R24 Automotive, Vardhannapeta,<br />
+              Warangal, Telangana
+            </p>
+            <a
+              href="https://www.google.com/maps?q=R24+Automotive,+Vardhannapeta,+Warangal,+Telangana"
+              target="_blank"
+              rel="noreferrer"
+              className="info-link-btn"
+            >
+              Get Directions
+            </a>
+          </div>
+
+          <div className="info-item">
+            <div className="info-item-heading">
+              <FaClock className="icon" />
+              <h3>Working Hours</h3>
+            </div>
+            <p>Monday - Sunday<br />9:00 AM - 9:00 PM</p>
           </div>
 
           <div className="social-buttons">

@@ -20,12 +20,12 @@ const servicePages = {
 };
 
 const servicePageLinkLabels = {
-  "Bike Service": "View Services & Pricing →",
-  "Custom Painting": "Design Your Bike →",
-  "Bike Wrapping": "Explore Wrapping Types →",
-  "Bike Detailing": "View Detailing Options →",
-  "Tyres & Wheels": "Find Your Tyre →",
-  Accessories: "Browse Accessories →",
+  "Bike Service": "View Services & Pricing →",
+  "Custom Painting": "Design Your Bike →",
+  "Bike Wrapping": "Explore Wrapping Types →",
+  "Bike Detailing": "View Detailing Options →",
+  "Tyres & Wheels": "Find Your Tyre →",
+  Accessories: "Browse Accessories →",
 };
 
 const services = [

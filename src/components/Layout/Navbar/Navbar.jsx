@@ -103,7 +103,6 @@ function Navbar() {
                 <div className="profile-dropdown">
                   <div className="profile-dropdown-header">
                     <strong>{customer?.name || "My Account"}</strong>
-                    {customer?.phoneNumber && <span>+91 {customer.phoneNumber}</span>}
                   </div>
 
                   <button
