@@ -6,7 +6,7 @@ import { BIKE_BRANDS, KTM_FAMILIES } from "../../constants/bikes";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
 
 function BookingModal({ serviceType, onClose }) {
-  const { customer } = useCustomerAuth();
+  const { customer, updateCustomer } = useCustomerAuth();
 
   const [name, setName] = useState(customer?.name || "");
   const [phone, setPhone] = useState(customer?.phoneNumber || "");
@@ -66,6 +66,20 @@ function BookingModal({ serviceType, onClose }) {
         bookingDate,
         bookingTime,
       });
+
+      // Sync name/phone/bike to this device's profile (silently) so "My
+      // Garage" can find this booking later without ever asking for a
+      // login — the phone here is just a data field now, not a credential.
+      try {
+        const res = await api.put("/customers/me", {
+          name: name.trim(),
+          phoneNumber: phone,
+          bikeModel,
+        });
+        updateCustomer(res.data);
+      } catch (syncError) {
+        console.error("Error syncing profile after booking:", syncError);
+      }
 
       const message = encodeURIComponent(
         `Hello R24 Automotive 👋 I've booked "${serviceType}".\n\nName: ${name}\nBike: ${bikeModel}\nPreferred Date: ${bookingDate}${

@@ -328,9 +328,7 @@ open && (
 
             <h3>R24 Automotive AI</h3>
 
-            <span>
-              {customer ? `🔒 Logged in as ${customer.name || "Rider"}` : "Online"}
-            </span>
+            <span>{customer?.name ? `👋 Hi, ${customer.name}` : "Online"}</span>
 
           </div>
 

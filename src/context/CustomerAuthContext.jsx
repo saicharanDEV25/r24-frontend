@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import api from "../services/api";
+import { getOrCreateDeviceId } from "../utils/deviceId";
 
 const CustomerAuthContext = createContext(null);
 
@@ -10,6 +11,27 @@ export function CustomerAuthProvider({ children }) {
   });
 
   const [favorites, setFavorites] = useState([]);
+
+  // No login step: every device gets a stable anonymous id (see
+  // utils/deviceId), and this exchanges it for a session + Customer row on
+  // first load — creating one on the backend the first time this device is
+  // seen. Same browser next time -> same customer, favorites/garage intact.
+  useEffect(() => {
+    const startSession = async () => {
+      try {
+        const deviceId = getOrCreateDeviceId();
+        const res = await api.post("/customers/session", { deviceId });
+
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("customer", JSON.stringify(res.data.customer));
+        setCustomer(res.data.customer);
+      } catch (error) {
+        console.error("Error starting customer session:", error);
+      }
+    };
+
+    startSession();
+  }, []);
 
   const loadFavorites = async () => {
     try {
@@ -28,32 +50,6 @@ export function CustomerAuthProvider({ children }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customer?.id]);
-
-  const requestOtp = async (phoneNumber) => {
-    const res = await api.post("/auth/customer/request-otp", {
-      phoneNumber,
-    });
-    return res.data;
-  };
-
-  const verifyOtp = async (phoneNumber, code) => {
-    const res = await api.post("/auth/customer/verify-otp", {
-      phoneNumber,
-      code,
-    });
-
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("customer", JSON.stringify(res.data.customer));
-    setCustomer(res.data.customer);
-
-    return res.data.customer;
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("customer");
-    setCustomer(null);
-  };
 
   const updateCustomer = (updated) => {
     localStorage.setItem("customer", JSON.stringify(updated));
@@ -92,9 +88,6 @@ export function CustomerAuthProvider({ children }) {
     <CustomerAuthContext.Provider
       value={{
         customer,
-        requestOtp,
-        verifyOtp,
-        logout,
         updateCustomer,
         favorites,
         isFavorite,

@@ -1,18 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FaBars, FaTimes, FaUserCircle, FaSignOutAlt, FaHeart, FaCalendarCheck } from "react-icons/fa";
+import { FaBars, FaTimes, FaUserCircle, FaHeart, FaCalendarCheck } from "react-icons/fa";
 import "./Navbar.css";
 import { useCustomerAuth } from "../../../context/CustomerAuthContext";
-import LoginModal from "../../Auth/LoginModal";
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef(null);
 
-  const { customer, logout } = useCustomerAuth();
+  const { customer } = useCustomerAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -85,74 +83,51 @@ function Navbar() {
               <FaCalendarCheck /> Book Service
             </a>
 
-            {customer ? (
-              <div className="profile-menu" ref={profileRef}>
-                <button
-                  className="profile-avatar-btn"
-                  onClick={() => setProfileOpen((prev) => !prev)}
-                  aria-label="My Account"
-                  title={customer.name || "My Account"}
-                >
-                  {customer.name ? (
-                    <span className="profile-avatar-initials">
-                      {customer.name.trim().charAt(0).toUpperCase()}
-                    </span>
-                  ) : (
-                    <FaUserCircle />
-                  )}
-                </button>
-
-                {profileOpen && (
-                  <div className="profile-dropdown">
-                    <div className="profile-dropdown-header">
-                      <strong>{customer.name || "My Account"}</strong>
-                      <span>+91 {customer.phoneNumber}</span>
-                    </div>
-
-                    <button
-                      onClick={() => {
-                        setProfileOpen(false);
-                        setMenuOpen(false);
-                        navigate("/profile");
-                      }}
-                    >
-                      <FaUserCircle /> My Profile
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setProfileOpen(false);
-                        setMenuOpen(false);
-                        navigate("/profile?tab=favorites");
-                      }}
-                    >
-                      <FaHeart /> Favorites
-                    </button>
-
-                    <button
-                      className="logout-item"
-                      onClick={() => {
-                        logout();
-                        setProfileOpen(false);
-                        setMenuOpen(false);
-                      }}
-                    >
-                      <FaSignOutAlt /> Logout
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
+            <div className="profile-menu" ref={profileRef}>
               <button
-                className="login-btn"
-                onClick={() => {
-                  setShowLogin(true);
-                  setMenuOpen(false);
-                }}
+                className="profile-avatar-btn"
+                onClick={() => setProfileOpen((prev) => !prev)}
+                aria-label="My Account"
+                title={customer?.name || "My Account"}
               >
-                <FaUserCircle /> Login
+                {customer?.name ? (
+                  <span className="profile-avatar-initials">
+                    {customer.name.trim().charAt(0).toUpperCase()}
+                  </span>
+                ) : (
+                  <FaUserCircle />
+                )}
               </button>
-            )}
+
+              {profileOpen && (
+                <div className="profile-dropdown">
+                  <div className="profile-dropdown-header">
+                    <strong>{customer?.name || "My Account"}</strong>
+                    {customer?.phoneNumber && <span>+91 {customer.phoneNumber}</span>}
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setProfileOpen(false);
+                      setMenuOpen(false);
+                      navigate("/profile");
+                    }}
+                  >
+                    <FaUserCircle /> My Profile
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setProfileOpen(false);
+                      setMenuOpen(false);
+                      navigate("/profile?tab=favorites");
+                    }}
+                  >
+                    <FaHeart /> Favorites
+                  </button>
+                </div>
+              )}
+            </div>
 
           </nav>
 
@@ -172,8 +147,6 @@ function Navbar() {
           onClick={() => setMenuOpen(false)}
         ></div>
       )}
-
-      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
     </>
   );
 }

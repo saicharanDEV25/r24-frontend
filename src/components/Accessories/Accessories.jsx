@@ -5,7 +5,6 @@ import "../../pages/Products/Product.css";
 import "./Accessories.css";
 import OptimizedImage from "../common/OptimizedImage/OptimizedImage";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
-import LoginModal from "../Auth/LoginModal";
 import { BIKE_BRANDS, KTM_FAMILIES } from "../../constants/bikes";
 
 function Accessories() {
@@ -14,13 +13,13 @@ function Accessories() {
   const [selectedBike, setSelectedBike] = useState(null);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [availability, setAvailability] = useState("All");
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [showLogin, setShowLogin] = useState(false);
 
-  const { customer, isFavorite, toggleFavorite } = useCustomerAuth();
+  const { isFavorite, toggleFavorite } = useCustomerAuth();
 
   const isKtm = selectedBrand === "KTM";
   const brandModels = selectedBrand
@@ -35,10 +34,6 @@ function Accessories() {
 
   const handleFavoriteClick = (e, item) => {
     e.stopPropagation();
-    if (!customer) {
-      setShowLogin(true);
-      return;
-    }
     toggleFavorite(item);
   };
 
@@ -48,6 +43,8 @@ function Accessories() {
       setProducts(res.data.filter((item) => item.active !== false));
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -219,7 +216,18 @@ function Accessories() {
           </div>
 
           <div className="products-grid">
-            {filteredProducts.map((item) => (
+            {loading && products.length === 0
+              ? Array.from({ length: 8 }).map((_, i) => (
+                  <div className="product-card skeleton-card" key={i}>
+                    <div className="skeleton-image" />
+                    <div className="product-content">
+                      <span className="skeleton-line skeleton-line-sm" />
+                      <span className="skeleton-line skeleton-line-lg" />
+                      <span className="skeleton-line skeleton-line-btn" />
+                    </div>
+                  </div>
+                ))
+              : filteredProducts.map((item) => (
               <div
                 className="product-card"
                 key={item.id}
@@ -269,7 +277,7 @@ function Accessories() {
               </div>
             ))}
 
-            {filteredProducts.length === 0 && (
+            {!loading && filteredProducts.length === 0 && (
               <p className="no-products-msg">
                 No accessories found for this search.
               </p>
@@ -349,7 +357,6 @@ function Accessories() {
         </div>
       )}
 
-      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
     </section>
   );
 }

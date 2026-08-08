@@ -4,7 +4,6 @@ import api from "../../services/api";
 import "./Product.css";
 import OptimizedImage from "../../components/common/OptimizedImage/OptimizedImage";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
-import LoginModal from "../../components/Auth/LoginModal";
 import Navbar from "../../components/Layout/Navbar/Navbar";
 import Footer from "../../components/Layout/Footer/Footer";
 
@@ -43,6 +42,7 @@ function Products() {
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
@@ -50,16 +50,11 @@ function Products() {
   const [sortBy, setSortBy] = useState("default");
 
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [showLogin, setShowLogin] = useState(false);
 
-  const { customer, isFavorite, toggleFavorite } = useCustomerAuth();
+  const { isFavorite, toggleFavorite } = useCustomerAuth();
 
   const handleFavoriteClick = (e, item) => {
     e.stopPropagation();
-    if (!customer) {
-      setShowLogin(true);
-      return;
-    }
     toggleFavorite(item);
   };
 
@@ -74,6 +69,8 @@ function Products() {
       setProducts(response.data.filter((item) => item.active !== false));
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -200,7 +197,18 @@ function Products() {
 
         <div className="products-grid">
 
-          {filteredProducts.map((item) => (
+          {loading && products.length === 0
+            ? Array.from({ length: 8 }).map((_, i) => (
+                <div className="product-card skeleton-card" key={i}>
+                  <div className="skeleton-image" />
+                  <div className="product-content">
+                    <span className="skeleton-line skeleton-line-sm" />
+                    <span className="skeleton-line skeleton-line-lg" />
+                    <span className="skeleton-line skeleton-line-btn" />
+                  </div>
+                </div>
+              ))
+            : filteredProducts.map((item) => (
 
             <div
               className="product-card"
@@ -340,8 +348,6 @@ function Products() {
         </div>
 
       )}
-
-      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
 
       <Footer />
 

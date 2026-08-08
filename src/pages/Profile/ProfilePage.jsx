@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import { FaUserCircle, FaHeart, FaTrash, FaMotorcycle } from "react-icons/fa";
 import Navbar from "../../components/Layout/Navbar/Navbar";
 import Footer from "../../components/Layout/Footer/Footer";
-import LoginModal from "../../components/Auth/LoginModal";
 import OptimizedImage from "../../components/common/OptimizedImage/OptimizedImage";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
 import { BIKE_BRANDS } from "../../constants/bikes";
@@ -36,8 +35,6 @@ function ProfilePage() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "info";
-
-  const [showLogin, setShowLogin] = useState(false);
 
   const [name, setName] = useState(customer?.name || "");
   const [email, setEmail] = useState(customer?.email || "");
@@ -127,13 +124,10 @@ function ProfilePage() {
         <section className="profile-page">
           <div className="profile-guest">
             <FaUserCircle />
-            <h2>You're not logged in</h2>
-            <p>Login to view your profile, bookings and favorites.</p>
-            <button onClick={() => setShowLogin(true)}>Login</button>
+            <h2>Setting things up…</h2>
           </div>
         </section>
         <Footer />
-        {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
       </>
     );
   }
@@ -144,7 +138,7 @@ function ProfilePage() {
       <section className="profile-page">
         <div className="profile-heading">
           <h2>My Account</h2>
-          <p>+91 {customer.phoneNumber}</p>
+          {customer.phoneNumber && <p>+91 {customer.phoneNumber}</p>}
         </div>
 
         <div className="profile-tabs">
@@ -192,7 +186,11 @@ function ProfilePage() {
 
             <label>
               Mobile Number
-              <input type="text" value={customer.phoneNumber} disabled />
+              <input
+                type="text"
+                value={customer.phoneNumber || "Not provided yet — book a service to add one"}
+                disabled
+              />
             </label>
 
             {saveMsg && <p className="profile-save-msg">{saveMsg}</p>}

@@ -4,22 +4,8 @@ import AIChatBot from "./components/AIChatBot/AIChatBot";
 import InstagramButton from "./components/Instagram/InstagramButton";
 import WhatsAppButton from "./components/WhatsApp/WhatsAppButton";
 import { CustomerAuthProvider } from "./context/CustomerAuthContext";
+import { getOrCreateDeviceId } from "./utils/deviceId";
 import api from "./services/api";
-
-function getOrCreateVisitorId() {
-  let visitorId = localStorage.getItem("visitorId");
-
-  if (!visitorId) {
-    visitorId =
-      typeof crypto !== "undefined" && crypto.randomUUID
-        ? crypto.randomUUID()
-        : `visitor-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-
-    localStorage.setItem("visitorId", visitorId);
-  }
-
-  return visitorId;
-}
 
 const HEARTBEAT_INTERVAL_MS = 45 * 1000; // 45 seconds
 
@@ -28,7 +14,7 @@ function App() {
   const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
-    const visitorId = getOrCreateVisitorId();
+    const visitorId = getOrCreateDeviceId();
 
     // Tracked once per tab session — surviving a background/minimize, but
     // reset when the tab is actually closed and reopened.
