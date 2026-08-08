@@ -10,6 +10,7 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import api from "../../services/api";
+import ScrollReveal from "../common/ScrollReveal/ScrollReveal";
 
 const initialForm = {
   name: "",
@@ -81,17 +82,19 @@ function Contact() {
   return (
     <section className="contact">
 
-      <div className="contact-heading">
-        <h2>Contact Us</h2>
-        <p>
-          Visit our showroom or send us a message — we usually reply within
-          an hour.
-        </p>
-      </div>
+      <ScrollReveal>
+        <div className="contact-heading">
+          <h2>Contact Us</h2>
+          <p>
+            Visit our showroom or send us a message — we usually reply within
+            an hour.
+          </p>
+        </div>
+      </ScrollReveal>
 
       <div className="contact-wrapper">
 
-        <div className="contact-info">
+        <ScrollReveal className="contact-info" y={30}>
 
           <div className="info-item">
             <FaPhoneAlt className="icon" />
@@ -154,8 +157,9 @@ function Contact() {
 
           </div>
 
-        </div>
+        </ScrollReveal>
 
+        <ScrollReveal delay={0.15} y={30}>
         <form className="contact-form" onSubmit={submitForm}>
 
           <h3>Send Us a Message</h3>
@@ -214,8 +218,9 @@ function Contact() {
             {submitting ? "Sending..." : "Send Message"}
           </button>
         </form>
+        </ScrollReveal>
 
-        <div className="contact-map">
+        <ScrollReveal className="contact-map" delay={0.25} y={30}>
 
           <iframe
             title="R24 Automotive"
@@ -223,7 +228,7 @@ function Contact() {
             loading="lazy"
           ></iframe>
 
-        </div>
+        </ScrollReveal>
 
       </div>
 

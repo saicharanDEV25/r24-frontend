@@ -8,6 +8,7 @@ import {
   FaCog,
 } from "react-icons/fa";
 import { GiCarWheel } from "react-icons/gi";
+import ScrollReveal from "../common/ScrollReveal/ScrollReveal";
 
 const servicePages = {
   "Bike Service": "/bike-service",
@@ -66,7 +67,9 @@ function Services() {
   return (
     <section className="services" id="services">
 
-      <h2>Our Premium Services</h2>
+      <ScrollReveal>
+        <h2>Our Premium Services</h2>
+      </ScrollReveal>
 
       <div className="service-grid">
 
@@ -77,38 +80,39 @@ function Services() {
             : undefined;
 
           return (
-            <div
-              className="service-card"
-              key={index}
-              onClick={goToPage}
-              role={targetPage ? "button" : undefined}
-              tabIndex={targetPage ? 0 : undefined}
-              onKeyDown={
-                targetPage
-                  ? (e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        goToPage();
+            <ScrollReveal key={index} delay={index * 0.08}>
+              <div
+                className="service-card"
+                onClick={goToPage}
+                role={targetPage ? "button" : undefined}
+                tabIndex={targetPage ? 0 : undefined}
+                onKeyDown={
+                  targetPage
+                    ? (e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          goToPage();
+                        }
                       }
-                    }
-                  : undefined
-              }
-            >
+                    : undefined
+                }
+              >
 
-              <div className="service-icon">
-                {service.icon}
+                <div className="service-icon">
+                  {service.icon}
+                </div>
+
+                <h3>{service.title}</h3>
+
+                <p>{service.desc}</p>
+
+                {targetPage && (
+                  <span className="service-card-link">
+                    {servicePageLinkLabels[service.title]}
+                  </span>
+                )}
+
               </div>
-
-              <h3>{service.title}</h3>
-
-              <p>{service.desc}</p>
-
-              {targetPage && (
-                <span className="service-card-link">
-                  {servicePageLinkLabels[service.title]}
-                </span>
-              )}
-
-            </div>
+            </ScrollReveal>
           );
         })}
 

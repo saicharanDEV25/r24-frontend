@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { FaPowerOff, FaVolumeMute } from "react-icons/fa";
 import { EngineSynth } from "../../utils/engineSynth";
 import { EnginePlayer } from "../../utils/enginePlayer";
+import ScrollReveal from "../common/ScrollReveal/ScrollReveal";
 import "./EngineExperience.css";
 
 const CYLINDER_OPTIONS = [
@@ -112,14 +113,17 @@ function EngineExperience() {
   return (
     <section className="engine-exp">
       <div className="container engine-exp-inner">
-        <div className="engine-exp-heading">
-          <span className="engine-exp-tag">Feel It Before You Ride It</span>
-          <h2>
-            Start the <span>Engine</span>
-          </h2>
-          <p>Pick your setup, hit start, and hear it come alive.</p>
-        </div>
+        <ScrollReveal>
+          <div className="engine-exp-heading">
+            <span className="engine-exp-tag">Feel It Before You Ride It</span>
+            <h2>
+              Start the <span>Engine</span>
+            </h2>
+            <p>Pick your setup, hit start, and hear it come alive.</p>
+          </div>
+        </ScrollReveal>
 
+        <ScrollReveal delay={0.15}>
         <div className="engine-exp-stage">
           <div className="engine-exp-visual">
             <div className="engine-bars">
@@ -180,6 +184,7 @@ function EngineExperience() {
             </div>
           </div>
         </div>
+        </ScrollReveal>
       </div>
     </section>
   );

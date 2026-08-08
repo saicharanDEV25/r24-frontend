@@ -5,6 +5,7 @@ import {
   FaClock,
   FaShieldAlt,
 } from "react-icons/fa";
+import ScrollReveal from "../common/ScrollReveal/ScrollReveal";
 
 const features = [
   {
@@ -33,28 +34,32 @@ function WhyChoose() {
   return (
     <section className="why">
 
-      <div className="why-heading">
-        <h2>Why Choose R24 Automotive?</h2>
-        <p>
-          Premium motorcycle service, detailing, modifications,
-          accessories and customer satisfaction under one roof.
-        </p>
-      </div>
+      <ScrollReveal>
+        <div className="why-heading">
+          <h2>Why Choose R24 Automotive?</h2>
+          <p>
+            Premium motorcycle service, detailing, modifications,
+            accessories and customer satisfaction under one roof.
+          </p>
+        </div>
+      </ScrollReveal>
 
       <div className="why-grid">
 
         {features.map((item, index) => (
-          <div className="why-card" key={index}>
+          <ScrollReveal key={index} delay={index * 0.08}>
+            <div className="why-card">
 
-            <div className="why-icon">
-              {item.icon}
+              <div className="why-icon">
+                {item.icon}
+              </div>
+
+              <h3>{item.title}</h3>
+
+              <p>{item.desc}</p>
+
             </div>
-
-            <h3>{item.title}</h3>
-
-            <p>{item.desc}</p>
-
-          </div>
+          </ScrollReveal>
         ))}
 
       </div>
