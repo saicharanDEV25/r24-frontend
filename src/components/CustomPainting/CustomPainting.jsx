@@ -1,6 +1,11 @@
 import { useState } from "react";
+import "../../pages/Products/Product.css";
 import "./CustomPainting.css";
-import { BIKE_BRANDS, KTM_FAMILIES } from "../../constants/bikes";
+import { BIKE_BRANDS } from "../../constants/bikes";
+
+// Only real bike brands (not the model-less Helmets/Riding Gear/Exhaust
+// entries) — you paint a bike, not a helmet.
+const PAINTABLE_BRANDS = BIKE_BRANDS.filter((b) => b.models.length > 0);
 
 const presetColors = [
   { name: "KTM Orange", hex: "#FF6600" },
@@ -18,20 +23,20 @@ const presetColors = [
 ];
 
 function CustomPainting() {
-  const [selectedBrand, setSelectedBrand] = useState(null);
-  const [selectedFamily, setSelectedFamily] = useState(null);
-  const [selectedBike, setSelectedBike] = useState(null);
+  // Always land on one concrete, real bike — same rule as the Products
+  // page — so the color picker below always has something valid to
+  // enquire about instead of needing a "pick your bike first" gate.
+  const [selectedBrand, setSelectedBrand] = useState(PAINTABLE_BRANDS[0].brand);
+  const [selectedBike, setSelectedBike] = useState(PAINTABLE_BRANDS[0].models[0]);
   const [selectedColor, setSelectedColor] = useState(presetColors[0]);
 
-  const isKtm = selectedBrand === "KTM";
-  const brandModels = selectedBrand
-    ? BIKE_BRANDS.find((b) => b.brand === selectedBrand)?.models || []
-    : [];
+  const brandModels =
+    PAINTABLE_BRANDS.find((b) => b.brand === selectedBrand)?.models || [];
 
-  const resetBikeSelection = () => {
-    setSelectedBrand(null);
-    setSelectedFamily(null);
-    setSelectedBike(null);
+  const selectBrand = (brand) => {
+    setSelectedBrand(brand);
+    const models = PAINTABLE_BRANDS.find((b) => b.brand === brand)?.models || [];
+    setSelectedBike(models[0]);
   };
 
   const handleCustomColor = (hex) => {
@@ -53,124 +58,78 @@ function CustomPainting() {
         </p>
       </div>
 
-      {!selectedBrand ? (
-        <div className="bike-select-grid">
-          {BIKE_BRANDS.map((b) => (
-            <button
-              key={b.brand}
-              className="bike-select-card"
-              onClick={() => setSelectedBrand(b.brand)}
-            >
-              {b.brand}
-            </button>
-          ))}
-        </div>
-      ) : isKtm && !selectedFamily ? (
-        <div className="bike-select-grid">
+      <div className="category-buttons">
+        {PAINTABLE_BRANDS.map((b) => (
           <button
-            className="bike-select-back"
-            onClick={() => setSelectedBrand(null)}
+            key={b.brand}
+            className={selectedBrand === b.brand ? "active" : ""}
+            onClick={() => selectBrand(b.brand)}
           >
-            ← Back to brands
+            {b.brand}
           </button>
-          {KTM_FAMILIES.map((f) => (
-            <button
-              key={f.family}
-              className="bike-select-card"
-              onClick={() => setSelectedFamily(f)}
-            >
-              {f.family}
-            </button>
-          ))}
-        </div>
-      ) : isKtm && !selectedBike ? (
-        <div className="bike-select-grid">
-          <button
-            className="bike-select-back"
-            onClick={() => setSelectedFamily(null)}
-          >
-            ← Back to models
-          </button>
-          {selectedFamily.variants.map((v) => (
-            <button
-              key={v.model}
-              className="bike-select-card"
-              onClick={() => setSelectedBike(v.model)}
-            >
-              {v.cc} cc
-            </button>
-          ))}
-        </div>
-      ) : !isKtm && !selectedBike ? (
-        <div className="bike-select-grid">
-          <button
-            className="bike-select-back"
-            onClick={() => setSelectedBrand(null)}
-          >
-            ← Back to brands
-          </button>
+        ))}
+      </div>
+
+      {brandModels.length > 0 && (
+        <div className="category-buttons">
           {brandModels.map((m) => (
             <button
               key={m}
-              className="bike-select-card"
+              className={selectedBike === m ? "active" : ""}
               onClick={() => setSelectedBike(m)}
             >
               {m}
             </button>
           ))}
         </div>
-      ) : (
-        <div className="color-picker">
-          <button className="bike-select-back" onClick={resetBikeSelection}>
-            ← Change Bike
-          </button>
-
-          <h4>Popular Colours</h4>
-
-          <div className="color-swatch-grid">
-            {presetColors.map((color) => (
-              <button
-                key={color.name}
-                className={
-                  selectedColor.name === color.name
-                    ? "color-swatch active"
-                    : "color-swatch"
-                }
-                style={{ backgroundColor: color.hex }}
-                onClick={() => setSelectedColor(color)}
-                aria-label={color.name}
-                title={color.name}
-              />
-            ))}
-          </div>
-
-          <h4 className="custom-color-heading">Or Pick Any Colour</h4>
-
-          <label className="custom-color-picker">
-            <input
-              type="color"
-              value={selectedColor.hex}
-              onChange={(e) => handleCustomColor(e.target.value)}
-            />
-            <span>Open Colour Picker</span>
-          </label>
-
-          <p className="selected-color-label">
-            {selectedBrand} {selectedBike} — Selected:{" "}
-            <strong>{selectedColor.name}</strong>{" "}
-            <span className="selected-color-hex">({selectedColor.hex})</span>
-          </p>
-
-          <a
-            href={`https://wa.me/918309560622?text=${whatsappMessage}`}
-            target="_blank"
-            rel="noreferrer"
-            className="paint-enquiry-btn"
-          >
-            Enquire About This Colour
-          </a>
-        </div>
       )}
+
+      <div className="color-picker">
+        <h4>Popular Colours</h4>
+
+        <div className="color-swatch-grid">
+          {presetColors.map((color) => (
+            <button
+              key={color.name}
+              className={
+                selectedColor.name === color.name
+                  ? "color-swatch active"
+                  : "color-swatch"
+              }
+              style={{ backgroundColor: color.hex }}
+              onClick={() => setSelectedColor(color)}
+              aria-label={color.name}
+              title={color.name}
+            />
+          ))}
+        </div>
+
+        <h4 className="custom-color-heading">Or Pick Any Colour</h4>
+
+        <label className="custom-color-picker">
+          <input
+            type="color"
+            value={selectedColor.hex}
+            onChange={(e) => handleCustomColor(e.target.value)}
+          />
+          <span>Open Colour Picker</span>
+        </label>
+
+        <p className="selected-color-label">
+          {selectedBrand} {selectedBike} — Selected:{" "}
+          <strong>{selectedColor.name}</strong>{" "}
+          <span className="selected-color-hex">({selectedColor.hex})</span>
+        </p>
+
+        <a
+          href={`https://wa.me/918309560622?text=${whatsappMessage}`}
+          target="_blank"
+          rel="noreferrer"
+          className="paint-enquiry-btn"
+        >
+          Enquire About This Colour
+        </a>
+      </div>
     </section>
   );
 }

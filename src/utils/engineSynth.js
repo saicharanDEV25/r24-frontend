@@ -1,12 +1,16 @@
 const CYLINDER_PARAMS = {
   single: { carrierFreq: 70, subFreq: 35, pulseHz: 9, jitter: 6 },
-  twin: { carrierFreq: 92, subFreq: 46, pulseHz: 16, jitter: 3 },
+  // Z900's inline-four: higher-pitched and faster-firing than a thumpy
+  // single, with tighter jitter for that smoother, more mechanical
+  // Japanese-four character.
+  z900: { carrierFreq: 105, subFreq: 52, pulseHz: 24, jitter: 2 },
 };
 
 const EXHAUST_PARAMS = {
   stock: { cutoff: 900, drive: 6, noiseLevel: 0.025, crackle: 0.03, gain: 0.32 },
   akrapovic: { cutoff: 2600, drive: 22, noiseLevel: 0.06, crackle: 0.12, gain: 0.42 },
   race: { cutoff: 5200, drive: 45, noiseLevel: 0.1, crackle: 0.28, gain: 0.5 },
+  z900exhaust: { cutoff: 3400, drive: 30, noiseLevel: 0.08, crackle: 0.18, gain: 0.46 },
 };
 
 // One full ride cycle through all 6 gears: idle -> 1st..6th gear, each

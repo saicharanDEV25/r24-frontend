@@ -13,7 +13,13 @@
     <meta name="keywords" content="R24 Automotive, KTM accessories, KTM service Warangal, bike detailing, bike wrapping, KTM spare parts, bike service Warangal" />
     <meta name="robots" content="index, follow" />
 
+    <!-- TODO: swap this for the real custom domain once one is purchased
+         (canonical/og:url currently point at the Vercel URL). -->
+    <link rel="canonical" href="https://r24-frontend.vercel.app/" />
+
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="R24 Automotive" />
+    <meta property="og:url" content="https://r24-frontend.vercel.app/" />
     <meta property="og:title" content="R24 Automotive | Premium KTM Detailing, Accessories & Service" />
     <meta
       property="og:description"
@@ -29,6 +35,37 @@
       content="Premium KTM bike detailing, genuine spare parts and accessories, custom painting, wrapping, tyres and expert servicing in Warangal."
     />
     <meta name="twitter:image" content="/images/hero.jpg" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "AutomotiveBusiness",
+        "name": "R24 Automotive",
+        "image": "https://r24-frontend.vercel.app/images/hero.jpg",
+        "url": "https://r24-frontend.vercel.app/",
+        "telephone": "+91-8309560622",
+        "priceRange": "₹₹",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Vardhannapeta",
+          "addressLocality": "Warangal",
+          "addressRegion": "Telangana",
+          "addressCountry": "IN"
+        },
+        "areaServed": "Warangal, Telangana",
+        "brand": {
+          "@type": "Brand",
+          "name": "KTM"
+        },
+        "makesOffer": [
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "KTM Bike Servicing" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "KTM Spare Parts & Accessories" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Bike Detailing & Custom Painting" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Bike Wrapping" } }
+        ],
+        "sameAs": []
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

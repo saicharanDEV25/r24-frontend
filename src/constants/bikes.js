@@ -12,9 +12,6 @@ export const BIKE_BRANDS = [
       "390 Adventure",
       "390 Adventure X",
       "390 Enduro R",
-      "790 Duke",
-      "890 Duke R",
-      "1290 Super Duke R",
     ],
   },
   {
@@ -23,7 +20,11 @@ export const BIKE_BRANDS = [
   },
   {
     brand: "Yamaha",
-    models: ["RS", "R15"],
+    models: ["R15"],
+  },
+  {
+    brand: "Bajaj",
+    models: ["RS"],
   },
   {
     brand: "Benelli",
@@ -33,6 +34,25 @@ export const BIKE_BRANDS = [
     brand: "Kawasaki",
     models: ["Z900"],
   },
+  {
+    brand: "Helmets",
+    models: [],
+  },
+  {
+    brand: "Riding Gear",
+    models: [],
+  },
+  {
+    brand: "Exhaust",
+    models: [],
+  },
+];
+
+// Shared brand row used by both the Products page and Accessories — keeping
+// them on one list means the two pages can't drift out of sync.
+export const BRAND_FILTER_OPTIONS = [
+  "All", "KTM", "Royal Enfield", "Yamaha", "Bajaj", "Benelli", "Kawasaki",
+  "Helmets", "Riding Gear", "Exhaust",
 ];
 
 export const KTM_BIKES = BIKE_BRANDS.find((b) => b.brand === "KTM").models;
@@ -46,9 +66,6 @@ export const KTM_FAMILIES = [
       { cc: "200", model: "200 Duke" },
       { cc: "250", model: "250 Duke" },
       { cc: "390", model: "390 Duke" },
-      { cc: "790", model: "790 Duke" },
-      { cc: "890 R", model: "890 Duke R" },
-      { cc: "1290 Super Duke R", model: "1290 Super Duke R" },
     ],
   },
   {

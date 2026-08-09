@@ -7,13 +7,14 @@ import "./EngineExperience.css";
 
 const CYLINDER_OPTIONS = [
   { value: "single", label: "Single Cylinder" },
-  { value: "twin", label: "Twin Cylinder (LC8c)" },
+  { value: "z900", label: "Z900" },
 ];
 
 const EXHAUST_OPTIONS = [
   { value: "stock", label: "Stock Exhaust" },
   { value: "akrapovic", label: "Akrapovič Slip-on" },
   { value: "race", label: "Full Race Exhaust" },
+  { value: "z900exhaust", label: "Z900 Exhaust" },
 ];
 
 const BAR_COUNT = 24;

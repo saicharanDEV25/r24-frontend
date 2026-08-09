@@ -4,43 +4,36 @@ import api from "../../services/api";
 import "../../pages/Products/Product.css";
 import "./Accessories.css";
 import OptimizedImage from "../common/OptimizedImage/OptimizedImage";
+import ProductPopup from "../common/ProductPopup/ProductPopup";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
-import { BIKE_BRANDS, KTM_FAMILIES } from "../../constants/bikes";
+import { BIKE_BRANDS, BRAND_FILTER_OPTIONS } from "../../constants/bikes";
 
 function Accessories() {
-  const [selectedBrand, setSelectedBrand] = useState(null);
-  const [selectedFamily, setSelectedFamily] = useState(null);
-  const [selectedBike, setSelectedBike] = useState(null);
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
-  const [availability, setAvailability] = useState("All");
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [brand, setBrand] = useState("All");
+  const [model, setModel] = useState("All");
+
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const { isFavorite, toggleFavorite } = useCustomerAuth();
-
-  const isKtm = selectedBrand === "KTM";
-  const brandModels = selectedBrand
-    ? BIKE_BRANDS.find((b) => b.brand === selectedBrand)?.models || []
-    : [];
-
-  const resetBikeSelection = () => {
-    setSelectedBrand(null);
-    setSelectedFamily(null);
-    setSelectedBike(null);
-  };
 
   const handleFavoriteClick = (e, item) => {
     e.stopPropagation();
     toggleFavorite(item);
   };
 
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
   const loadProducts = async () => {
     try {
-      const res = await api.get("/products");
-      setProducts(res.data.filter((item) => item.active !== false));
+      const response = await api.get("/products");
+      setProducts(response.data.filter((item) => item.active !== false));
     } catch (error) {
       console.log(error);
     } finally {
@@ -48,314 +41,236 @@ function Accessories() {
     }
   };
 
-  const loadCategories = async () => {
-    try {
-      const res = await api.get("/categories");
-      setCategories(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    if (!selectedBike) return;
-    loadProducts();
-    loadCategories();
-  }, [selectedBike]);
-
-  const filteredProducts = products.filter((item) => {
-    const matchesCategory =
-      category === "All" || item.category?.name === category;
-
-    const matchesSearch = (item.name || "")
-      .toLowerCase()
-      .includes(search.toLowerCase());
-
-    const matchesAvailability =
-      availability === "All" ||
-      (availability === "In Stock" ? item.stock > 0 : item.stock <= 0);
-
-    return matchesCategory && matchesSearch && matchesAvailability;
+  const brandCounts = { All: products.length };
+  products.forEach((item) => {
+    const b = item.brand || "KTM";
+    brandCounts[b] = (brandCounts[b] || 0) + 1;
   });
 
-  const enquiryMessage = (product) =>
-    encodeURIComponent(
-      `Hi R24 Automotive 👋 I'm interested in ${product.name} for my ${selectedBrand} ${selectedBike}. Please share more details.`
-    );
+  const productsForBrand = products.filter(
+    (item) => brand === "All" || (item.brand || "KTM") === brand
+  );
+
+  const brandModels =
+    brand === "All"
+      ? []
+      : BIKE_BRANDS.find((b) => b.brand === brand)?.models || [];
+  const showModelRow = brandModels.length > 0;
+
+  // Strict match, same rule as the Products page — a product with no
+  // model set means fitment isn't confirmed yet, so it only shows up
+  // once it's actually tagged for the selected model.
+  const productsForModel = productsForBrand.filter(
+    (item) => model === "All" || item.model === model
+  );
+
+  const filteredProducts = productsForModel.filter((item) =>
+    (item.name || "").toLowerCase().includes(search.toLowerCase())
+  );
+
+  const searchTerm = search.trim().toLowerCase();
+  const searchMatches = searchTerm
+    ? products
+        .filter((item) => (item.name || "").toLowerCase().includes(searchTerm))
+        .slice(0, 150)
+    : [];
+  const showSearchDropdown = searchFocused && searchTerm.length > 0;
+
+  const openSearchResult = (item) => {
+    setSelectedProduct(item);
+    setSearch("");
+    setSearchFocused(false);
+  };
+
+  const selectBrand = (label) => {
+    setBrand(label);
+    const models = label === "All"
+      ? []
+      : BIKE_BRANDS.find((b) => b.brand === label)?.models || [];
+    setModel(models.length > 0 ? models[0] : "All");
+  };
+
+  const modelCounts = { All: productsForBrand.length };
+  brandModels.forEach((m) => {
+    modelCounts[m] = productsForBrand.filter(
+      (item) => item.model === m
+    ).length;
+  });
 
   return (
-    <section className="accessories-page" id="accessories">
-      <div className="section-heading">
-        <span className="section-tag">Accessories</span>
-        <h2>Genuine Spare Parts & Accessories</h2>
+    <section className="products-page" id="accessories">
+
+      <div className="products-header">
+
+        <h1>Genuine Spare Parts & Accessories</h1>
+
         <p>
-          Select your bike to browse genuine parts and accessories available
-          for it.
+          Explore premium accessories, performance upgrades and genuine
+          spare parts available at R24 Automotive.
         </p>
-      </div>
 
-      {!selectedBrand ? (
-        <div className="bike-select-grid">
-          {BIKE_BRANDS.map((b) => (
-            <button
-              key={b.brand}
-              className="bike-select-card"
-              onClick={() => setSelectedBrand(b.brand)}
-            >
-              {b.brand}
-            </button>
-          ))}
-        </div>
-      ) : isKtm && !selectedFamily ? (
-        <div className="bike-select-grid">
-          <button
-            className="bike-select-back"
-            onClick={() => setSelectedBrand(null)}
-          >
-            ← Back to brands
-          </button>
-          {KTM_FAMILIES.map((f) => (
-            <button
-              key={f.family}
-              className="bike-select-card"
-              onClick={() => setSelectedFamily(f)}
-            >
-              {f.family}
-            </button>
-          ))}
-        </div>
-      ) : isKtm && !selectedBike ? (
-        <div className="bike-select-grid">
-          <button
-            className="bike-select-back"
-            onClick={() => setSelectedFamily(null)}
-          >
-            ← Back to models
-          </button>
-          {selectedFamily.variants.map((v) => (
-            <button
-              key={v.model}
-              className="bike-select-card"
-              onClick={() => setSelectedBike(v.model)}
-            >
-              {v.cc} cc
-            </button>
-          ))}
-        </div>
-      ) : !isKtm && !selectedBike ? (
-        <div className="bike-select-grid">
-          <button
-            className="bike-select-back"
-            onClick={() => setSelectedBrand(null)}
-          >
-            ← Back to brands
-          </button>
-          {brandModels.map((m) => (
-            <button
-              key={m}
-              className="bike-select-card"
-              onClick={() => setSelectedBike(m)}
-            >
-              {m}
-            </button>
-          ))}
-        </div>
-      ) : (
-        <div className="accessories-catalog">
-          <p className="catalog-note">
-            Showing genuine parts & accessories for your{" "}
-            <strong>
-              {selectedBrand} {selectedBike}
-            </strong>
-            .{" "}
-            <button className="bike-select-back" onClick={resetBikeSelection}>
-              Change Bike
-            </button>
-          </p>
+        <div className="search-box">
 
-          <div className="search-box">
-            <input
-              type="text"
-              placeholder="Search Accessories..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
+          <input
+            type="text"
+            placeholder="Search Accessories..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
+          />
 
-          <div className="category-buttons">
-            <button
-              className={category === "All" ? "active" : ""}
-              onClick={() => setCategory("All")}
-            >
-              All
-            </button>
-
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                className={category === cat.name ? "active" : ""}
-                onClick={() => setCategory(cat.name)}
-              >
-                {cat.name}
-              </button>
-            ))}
-          </div>
-
-          <div className="filter-toolbar">
-            <div className="availability-buttons">
-              {["All", "In Stock", "Out of Stock"].map((label) => (
-                <button
-                  key={label}
-                  className={availability === label ? "active" : ""}
-                  onClick={() => setAvailability(label)}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="products-grid">
-            {loading && products.length === 0
-              ? Array.from({ length: 8 }).map((_, i) => (
-                  <div className="product-card skeleton-card" key={i}>
-                    <div className="skeleton-image" />
-                    <div className="product-content">
-                      <span className="skeleton-line skeleton-line-sm" />
-                      <span className="skeleton-line skeleton-line-lg" />
-                      <span className="skeleton-line skeleton-line-btn" />
-                    </div>
-                  </div>
-                ))
-              : filteredProducts.map((item) => (
-              <div
-                className="product-card"
-                key={item.id}
-                onClick={() => setSelectedProduct(item)}
-              >
-                <div className="product-image-wrap">
-                  <OptimizedImage
-                    src={item.imageUrl}
-                    width={400}
-                    alt={item.name}
-                    fallbackSrc="https://placehold.co/400x400?text=No+Image"
-                  />
-
-                  <span
-                    className={
-                      item.stock > 0
-                        ? "stock-badge in-stock"
-                        : "stock-badge out-of-stock"
-                    }
-                  >
-                    {item.stock > 0 ? "In Stock" : "Out of Stock"}
-                  </span>
-
-                  <button
-                    className="favorite-btn"
-                    onClick={(e) => handleFavoriteClick(e, item)}
-                    aria-label="Save to favorites"
-                  >
-                    {isFavorite(item.id) ? <FaHeart /> : <FaRegHeart />}
-                  </button>
+          {showSearchDropdown && (
+            <div className="search-dropdown">
+              {searchMatches.length === 0 ? (
+                <div className="search-dropdown-empty">
+                  No products match "{search.trim()}"
                 </div>
-
-                <div className="product-content">
-                  <span>{item.category?.name}</span>
-                  <h3>{item.name}</h3>
-
+              ) : (
+                searchMatches.map((item) => (
                   <button
-                    className="details-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedProduct(item);
+                    key={item.id}
+                    className="search-dropdown-item"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      openSearchResult(item);
                     }}
                   >
-                    View Details
+                    <OptimizedImage
+                      src={item.imageUrl}
+                      width={80}
+                      alt={item.name}
+                      wrapperClassName="search-dropdown-thumb"
+                      fallbackSrc="https://placehold.co/80x80?text=No+Image"
+                    />
+                    <span className="search-dropdown-info">
+                      <strong>{item.name}</strong>
+                      <span>
+                        {item.brand || "KTM"}{item.model ? ` ${item.model}` : ""} · {item.category?.name}
+                      </span>
+                    </span>
                   </button>
-                </div>
-              </div>
-            ))}
+                ))
+              )}
+            </div>
+          )}
 
-            {!loading && filteredProducts.length === 0 && (
-              <p className="no-products-msg">
-                No accessories found for this search.
-              </p>
-            )}
-          </div>
+        </div>
+
+      </div>
+
+      <div className="category-buttons">
+
+        {BRAND_FILTER_OPTIONS.map((label) => (
+
+          <button
+            key={label}
+            className={brand === label ? "active" : ""}
+            onClick={() => selectBrand(label)}
+          >
+            {label}
+            <span className="category-count">{brandCounts[label] || 0}</span>
+          </button>
+
+        ))}
+
+      </div>
+
+      {showModelRow && (
+        <div className="category-buttons">
+
+          {brandModels.map((label) => (
+
+            <button
+              key={label}
+              className={model === label ? "active" : ""}
+              onClick={() => setModel(label)}
+            >
+              {label}
+              <span className="category-count">{modelCounts[label] || 0}</span>
+            </button>
+
+          ))}
+
         </div>
       )}
 
-      {selectedProduct && (
-        <div
-          className="popup-overlay"
-          onClick={() => setSelectedProduct(null)}
-        >
-          <div className="product-popup" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="close-popup"
-              onClick={() => setSelectedProduct(null)}
-            >
-              ✕
-            </button>
+      <div className="products-grid">
+
+        {loading && products.length === 0
+          ? Array.from({ length: 8 }).map((_, i) => (
+              <div className="product-card skeleton-card" key={i}>
+                <div className="skeleton-image" />
+                <div className="product-content">
+                  <span className="skeleton-line skeleton-line-sm" />
+                  <span className="skeleton-line skeleton-line-lg" />
+                  <span className="skeleton-line skeleton-line-btn" />
+                </div>
+              </div>
+            ))
+          : filteredProducts.map((item) => (
+
+          <div
+            className="product-card"
+            key={item.id}
+            onClick={() => setSelectedProduct(item)}
+          >
 
             <div className="product-image-wrap">
               <OptimizedImage
-                src={selectedProduct.imageUrl}
-                width={700}
-                alt={selectedProduct.name}
-                eager
-                fallbackSrc="https://placehold.co/500x500?text=No+Image"
+                src={item.imageUrl}
+                width={400}
+                alt={item.name}
+                fallbackSrc="https://placehold.co/400x400?text=No+Image"
               />
 
               <button
                 className="favorite-btn"
-                onClick={(e) => handleFavoriteClick(e, selectedProduct)}
+                onClick={(e) => handleFavoriteClick(e, item)}
                 aria-label="Save to favorites"
               >
-                {isFavorite(selectedProduct.id) ? <FaHeart /> : <FaRegHeart />}
+                {isFavorite(item.id) ? <FaHeart /> : <FaRegHeart />}
               </button>
             </div>
 
-            <div className="popup-content">
-              <span className="popup-category">
-                {selectedProduct.category?.name}
+            <div className="product-content">
+
+              <span>
+                {item.brand || "KTM"}{item.model ? ` ${item.model}` : ""} · {item.category?.name}
               </span>
 
-              <span
-                className={
-                  selectedProduct.stock > 0
-                    ? "stock-badge in-stock popup-stock-badge"
-                    : "stock-badge out-of-stock popup-stock-badge"
-                }
+              <h3>{item.name}</h3>
+
+              <button
+                className="details-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedProduct(item);
+                }}
               >
-                {selectedProduct.stock > 0 ? "In Stock" : "Out of Stock"}
-              </span>
+                View Details
+              </button>
 
-              <h2>{selectedProduct.name}</h2>
-              <p>{selectedProduct.description}</p>
-
-              <ul className="popup-features">
-                <li>✔ Premium Quality Product</li>
-                <li>✔ Genuine KTM Compatible</li>
-                <li>✔ Professional Installation Available</li>
-                <li>✔ Warranty Support Available</li>
-              </ul>
-
-              <a
-                href={`https://wa.me/918309560622?text=${enquiryMessage(
-                  selectedProduct
-                )}`}
-                target="_blank"
-                rel="noreferrer"
-                className="popup-btn"
-              >
-                Enquire on WhatsApp
-              </a>
             </div>
+
           </div>
-        </div>
-      )}
+
+        ))}
+
+        {!loading && filteredProducts.length === 0 && (
+          <p className="no-products-msg">
+            No accessories found for this search.
+          </p>
+        )}
+
+      </div>
+
+      <ProductPopup
+        product={selectedProduct}
+        isFavorite={isFavorite}
+        onToggleFavorite={toggleFavorite}
+        onClose={() => setSelectedProduct(null)}
+      />
 
     </section>
   );

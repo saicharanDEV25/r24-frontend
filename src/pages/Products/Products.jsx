@@ -7,9 +7,7 @@ import ProductPopup from "../../components/common/ProductPopup/ProductPopup";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
 import Navbar from "../../components/Layout/Navbar/Navbar";
 import Footer from "../../components/Layout/Footer/Footer";
-import { BIKE_BRANDS } from "../../constants/bikes";
-
-const BRAND_FILTER_OPTIONS = ["All", "KTM", "Royal Enfield", "Yamaha", "Benelli", "Kawasaki"];
+import { BIKE_BRANDS, BRAND_FILTER_OPTIONS } from "../../constants/bikes";
 
 function Products() {
 
@@ -84,7 +82,7 @@ function Products() {
   const searchMatches = searchTerm
     ? products
         .filter((item) => (item.name || "").toLowerCase().includes(searchTerm))
-        .slice(0, 20)
+        .slice(0, 150)
     : [];
   const showSearchDropdown = searchFocused && searchTerm.length > 0;
 
