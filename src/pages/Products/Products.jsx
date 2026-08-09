@@ -8,44 +8,15 @@ import { useCustomerAuth } from "../../context/CustomerAuthContext";
 import Navbar from "../../components/Layout/Navbar/Navbar";
 import Footer from "../../components/Layout/Footer/Footer";
 
-const CATEGORY_GROUPS = {
-  "KTM Accessories": [
-    "Air Filters",
-    "Oil Filters",
-    "Spark Plugs",
-    "Chain & Sprockets",
-    "Brake Pads",
-    "Brake Discs & Rotors",
-    "Clutch Plates",
-    "Fuel Pumps",
-    "Batteries",
-    "Handlebar Grips & Levers",
-    "Mirrors",
-    "Foot Pegs & Rearsets",
-    "Suspension & Fork Parts",
-    "Radiator & Cooling",
-    "Cables & Wiring",
-    "Lighting & Bulbs",
-    "Seat & Comfort",
-    "Crash Guards & Frame Sliders",
-    "Number Plate & Tail Tidy",
-  ],
-};
-
-function getGroupLabel(categoryName) {
-  for (const [group, members] of Object.entries(CATEGORY_GROUPS)) {
-    if (members.includes(categoryName)) return group;
-  }
-  return categoryName;
-}
+const BRAND_FILTER_OPTIONS = ["All", "KTM", "Royal Enfield", "Yamaha", "Benelli"];
 
 function Products() {
 
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
+  const [brand, setBrand] = useState("All");
   const [category, setCategory] = useState("All");
   const [availability, setAvailability] = useState("All");
 
@@ -60,7 +31,6 @@ function Products() {
 
   useEffect(() => {
     loadProducts();
-    loadCategories();
   }, []);
 
   const loadProducts = async () => {
@@ -74,34 +44,34 @@ function Products() {
     }
   };
 
-  const loadCategories = async () => {
-    try {
-      const response = await api.get("/categories");
-      setCategories(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const brandCounts = { All: products.length };
+  products.forEach((item) => {
+    const b = item.brand || "KTM";
+    brandCounts[b] = (brandCounts[b] || 0) + 1;
+  });
+
+  const productsForBrand = products.filter(
+    (item) => brand === "All" || (item.brand || "KTM") === brand
+  );
 
   const categoryFilterOptions = ["All"];
-  categories.forEach((cat) => {
-    const label = getGroupLabel(cat.name);
-    if (!categoryFilterOptions.includes(label)) {
-      categoryFilterOptions.push(label);
+  productsForBrand.forEach((item) => {
+    const name = item.category?.name;
+    if (name && !categoryFilterOptions.includes(name)) {
+      categoryFilterOptions.push(name);
     }
   });
 
-  const categoryCounts = { All: products.length };
-  products.forEach((item) => {
-    const label = getGroupLabel(item.category?.name);
-    categoryCounts[label] = (categoryCounts[label] || 0) + 1;
+  const categoryCounts = { All: productsForBrand.length };
+  productsForBrand.forEach((item) => {
+    const name = item.category?.name;
+    if (name) categoryCounts[name] = (categoryCounts[name] || 0) + 1;
   });
 
-  const filteredProducts = products.filter((item) => {
+  const filteredProducts = productsForBrand.filter((item) => {
 
     const matchesCategory =
-      category === "All" ||
-      getGroupLabel(item.category?.name) === category;
+      category === "All" || item.category?.name === category;
 
     const matchesSearch =
       (item.name || "")
@@ -124,7 +94,7 @@ function Products() {
 
         <div className="products-header">
 
-          <h1>KTM Accessories & Spare Parts</h1>
+          <h1>Bike Accessories & Spare Parts</h1>
 
           <p>
             Explore premium accessories, performance upgrades and genuine
@@ -141,6 +111,26 @@ function Products() {
             />
 
           </div>
+
+        </div>
+
+        <div className="category-buttons">
+
+          {BRAND_FILTER_OPTIONS.map((label) => (
+
+            <button
+              key={label}
+              className={brand === label ? "active" : ""}
+              onClick={() => {
+                setBrand(label);
+                setCategory("All");
+              }}
+            >
+              {label}
+              <span className="category-count">{brandCounts[label] || 0}</span>
+            </button>
+
+          ))}
 
         </div>
 
@@ -227,7 +217,7 @@ function Products() {
 
               <div className="product-content">
 
-                <span>{item.category?.name}</span>
+                <span>{item.brand || "KTM"} · {item.category?.name}</span>
 
                 <h3>{item.name}</h3>
 

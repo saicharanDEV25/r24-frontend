@@ -49,6 +49,7 @@ function Navbar() {
 
           <Link
             to="/"
+            replace
             className="logo"
             onClick={() => setMenuOpen(false)}
           >
@@ -57,19 +58,19 @@ function Navbar() {
 
           <nav className={menuOpen ? "nav-links active" : "nav-links"}>
 
-            <NavLink to="/" onClick={() => setMenuOpen(false)}>
+            <NavLink to="/" replace onClick={() => setMenuOpen(false)}>
               Home
             </NavLink>
 
-            <NavLink to="/products" onClick={() => setMenuOpen(false)}>
+            <NavLink to="/products" replace onClick={() => setMenuOpen(false)}>
               Products
             </NavLink>
 
-            <NavLink to="/help" onClick={() => setMenuOpen(false)}>
+            <NavLink to="/help" replace onClick={() => setMenuOpen(false)}>
               Help
             </NavLink>
 
-            <NavLink to="/contact" onClick={() => setMenuOpen(false)}>
+            <NavLink to="/contact" replace onClick={() => setMenuOpen(false)}>
               Contact
             </NavLink>
 

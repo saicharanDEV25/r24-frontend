@@ -25,11 +25,11 @@ function Footer() {
           <h3>Quick Links</h3>
 
           <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/#services">Services</Link></li>
-            <li><Link to="/accessories">Accessories</Link></li>
-            <li><Link to="/#gallery">Gallery</Link></li>
-            <li><Link to="/contact">Contact</Link></li>
+            <li><Link to="/" replace>Home</Link></li>
+            <li><Link to="/#services" replace>Services</Link></li>
+            <li><Link to="/accessories" replace>Accessories</Link></li>
+            <li><Link to="/#gallery" replace>Gallery</Link></li>
+            <li><Link to="/contact" replace>Contact</Link></li>
           </ul>
         </div>
 
