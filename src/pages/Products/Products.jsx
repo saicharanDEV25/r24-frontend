@@ -57,13 +57,18 @@ function Products() {
     (item) => brand === "All" || (item.brand || "KTM") === brand
   );
 
-  // Royal Enfield only has one model right now, so there's nothing to pick —
-  // Yamaha/Benelli have several, so a model row makes sense for those.
+  // Royal Enfield only has one model, so there's nothing to pick. KTM has
+  // 13 possible models but none of its products are actually tagged with
+  // one yet (the spares list had no per-model fitment data) — showing the
+  // row there would just repeat the same full list under every button, so
+  // only show it once the brand's products actually carry model data
+  // (Yamaha/Benelli do).
   const brandModels =
     brand === "All"
       ? []
       : BIKE_BRANDS.find((b) => b.brand === brand)?.models || [];
-  const showModelRow = brandModels.length > 1;
+  const productsHaveModelData = productsForBrand.some((item) => item.model);
+  const showModelRow = brandModels.length > 1 && productsHaveModelData;
 
   // A product with no model set isn't "unknown" — it fits every model of
   // that brand (most of the current KTM catalog is generic like this), so
