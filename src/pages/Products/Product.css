@@ -454,6 +454,108 @@
     .search-box{
         max-width:550px;
         margin:35px auto;
+        position:relative;
+    }
+
+    .search-dropdown{
+        position:absolute;
+        top:calc(100% + 10px);
+        left:0;
+        right:0;
+        background:#171717;
+        border:1px solid rgba(255,208,0,.18);
+        border-radius:16px;
+        box-shadow:0 20px 45px rgba(0,0,0,.45);
+        max-height:420px;
+        overflow-y:auto;
+        z-index:50;
+        text-align:left;
+    }
+
+    .search-dropdown-empty{
+        padding:20px;
+        color:#999;
+        font-size:14px;
+        text-align:center;
+    }
+
+    .search-dropdown-item{
+        display:flex;
+        align-items:center;
+        gap:12px;
+        width:100%;
+        padding:10px 14px;
+        background:transparent;
+        border:none;
+        border-bottom:1px solid rgba(255,255,255,.06);
+        cursor:pointer;
+        transition:.2s;
+        text-align:left;
+    }
+
+    .search-dropdown-item:last-child{
+        border-bottom:none;
+    }
+
+    .search-dropdown-item:hover{
+        background:rgba(255,208,0,.08);
+    }
+
+    .search-dropdown-thumb{
+        width:44px;
+        height:44px;
+        min-width:44px;
+        border-radius:8px;
+        overflow:hidden;
+        background:#0d0d0d;
+    }
+
+    .search-dropdown-thumb img{
+        width:100%;
+        height:100%;
+        object-fit:contain;
+    }
+
+    .search-dropdown-info{
+        display:flex;
+        flex-direction:column;
+        gap:2px;
+        flex:1;
+        min-width:0;
+    }
+
+    .search-dropdown-info strong{
+        color:#fff;
+        font-size:13.5px;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+    }
+
+    .search-dropdown-info span{
+        color:#999;
+        font-size:11.5px;
+        text-transform:uppercase;
+        letter-spacing:.3px;
+    }
+
+    .search-dropdown-stock{
+        flex-shrink:0;
+        font-size:10px;
+        font-weight:700;
+        text-transform:uppercase;
+        padding:3px 8px;
+        border-radius:20px;
+    }
+
+    .search-dropdown-stock.in-stock{
+        background:rgba(46,204,113,.15);
+        color:#3ee08a;
+    }
+
+    .search-dropdown-stock.out-of-stock{
+        background:rgba(231,76,60,.15);
+        color:#ff6b5b;
     }
 
     .search-box input{

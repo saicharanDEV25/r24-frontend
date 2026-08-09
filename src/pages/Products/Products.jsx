@@ -17,6 +17,7 @@ function Products() {
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
   const [brand, setBrand] = useState("All");
   const [model, setModel] = useState("All");
   const [category, setCategory] = useState("All");
@@ -100,6 +101,24 @@ function Products() {
 
   });
 
+  // Live dropdown searches the whole catalog (not just the currently
+  // selected brand/category), same as the reference site — picking a
+  // result opens it directly instead of making the user hunt for it in
+  // the grid below.
+  const searchTerm = search.trim().toLowerCase();
+  const searchMatches = searchTerm
+    ? products
+        .filter((item) => (item.name || "").toLowerCase().includes(searchTerm))
+        .slice(0, 8)
+    : [];
+  const showSearchDropdown = searchFocused && searchTerm.length > 0;
+
+  const openSearchResult = (item) => {
+    setSelectedProduct(item);
+    setSearch("");
+    setSearchFocused(false);
+  };
+
   const selectBrand = (label) => {
     setBrand(label);
     setCategory("All");
@@ -138,7 +157,53 @@ function Products() {
               placeholder="Search Products..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
             />
+
+            {showSearchDropdown && (
+              <div className="search-dropdown">
+                {searchMatches.length === 0 ? (
+                  <div className="search-dropdown-empty">
+                    No products match "{search.trim()}"
+                  </div>
+                ) : (
+                  searchMatches.map((item) => (
+                    <button
+                      key={item.id}
+                      className="search-dropdown-item"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        openSearchResult(item);
+                      }}
+                    >
+                      <OptimizedImage
+                        src={item.imageUrl}
+                        width={80}
+                        alt={item.name}
+                        wrapperClassName="search-dropdown-thumb"
+                        fallbackSrc="https://placehold.co/80x80?text=No+Image"
+                      />
+                      <span className="search-dropdown-info">
+                        <strong>{item.name}</strong>
+                        <span>
+                          {item.brand || "KTM"}{item.model ? ` ${item.model}` : ""} · {item.category?.name}
+                        </span>
+                      </span>
+                      <span
+                        className={
+                          item.stock > 0
+                            ? "search-dropdown-stock in-stock"
+                            : "search-dropdown-stock out-of-stock"
+                        }
+                      >
+                        {item.stock > 0 ? "In Stock" : "Out of Stock"}
+                      </span>
+                    </button>
+                  ))
+                )}
+              </div>
+            )}
 
           </div>
 
