@@ -7,6 +7,7 @@ import ProductPopup from "../../components/common/ProductPopup/ProductPopup";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
 import Navbar from "../../components/Layout/Navbar/Navbar";
 import Footer from "../../components/Layout/Footer/Footer";
+import { BIKE_BRANDS } from "../../constants/bikes";
 
 const BRAND_FILTER_OPTIONS = ["All", "KTM", "Royal Enfield", "Yamaha", "Benelli"];
 
@@ -17,6 +18,7 @@ function Products() {
 
   const [search, setSearch] = useState("");
   const [brand, setBrand] = useState("All");
+  const [model, setModel] = useState("All");
   const [category, setCategory] = useState("All");
   const [availability, setAvailability] = useState("All");
 
@@ -54,21 +56,33 @@ function Products() {
     (item) => brand === "All" || (item.brand || "KTM") === brand
   );
 
+  // Royal Enfield only has one model right now, so there's nothing to pick —
+  // Yamaha/Benelli have several, so a model row makes sense for those.
+  const brandModels =
+    brand === "All"
+      ? []
+      : BIKE_BRANDS.find((b) => b.brand === brand)?.models || [];
+  const showModelRow = brandModels.length > 1;
+
+  const productsForModel = productsForBrand.filter(
+    (item) => model === "All" || item.model === model
+  );
+
   const categoryFilterOptions = ["All"];
-  productsForBrand.forEach((item) => {
+  productsForModel.forEach((item) => {
     const name = item.category?.name;
     if (name && !categoryFilterOptions.includes(name)) {
       categoryFilterOptions.push(name);
     }
   });
 
-  const categoryCounts = { All: productsForBrand.length };
-  productsForBrand.forEach((item) => {
+  const categoryCounts = { All: productsForModel.length };
+  productsForModel.forEach((item) => {
     const name = item.category?.name;
     if (name) categoryCounts[name] = (categoryCounts[name] || 0) + 1;
   });
 
-  const filteredProducts = productsForBrand.filter((item) => {
+  const filteredProducts = productsForModel.filter((item) => {
 
     const matchesCategory =
       category === "All" || item.category?.name === category;
@@ -84,6 +98,22 @@ function Products() {
 
     return matchesCategory && matchesSearch && matchesAvailability;
 
+  });
+
+  const selectBrand = (label) => {
+    setBrand(label);
+    setCategory("All");
+    const models = label === "All"
+      ? []
+      : BIKE_BRANDS.find((b) => b.brand === label)?.models || [];
+    // Single-model brand (Royal Enfield): jump straight to that model.
+    // Multi-model brand: reset to "All" and let the model row narrow it.
+    setModel(models.length === 1 ? models[0] : "All");
+  };
+
+  const modelCounts = { All: productsForBrand.length };
+  productsForBrand.forEach((item) => {
+    if (item.model) modelCounts[item.model] = (modelCounts[item.model] || 0) + 1;
   });
 
   return (
@@ -121,10 +151,7 @@ function Products() {
             <button
               key={label}
               className={brand === label ? "active" : ""}
-              onClick={() => {
-                setBrand(label);
-                setCategory("All");
-              }}
+              onClick={() => selectBrand(label)}
             >
               {label}
               <span className="category-count">{brandCounts[label] || 0}</span>
@@ -133,6 +160,28 @@ function Products() {
           ))}
 
         </div>
+
+        {showModelRow && (
+          <div className="category-buttons">
+
+            {["All", ...brandModels].map((label) => (
+
+              <button
+                key={label}
+                className={model === label ? "active" : ""}
+                onClick={() => {
+                  setModel(label);
+                  setCategory("All");
+                }}
+              >
+                {label}
+                <span className="category-count">{modelCounts[label] || 0}</span>
+              </button>
+
+            ))}
+
+          </div>
+        )}
 
         <div className="category-buttons">
 
@@ -217,7 +266,9 @@ function Products() {
 
               <div className="product-content">
 
-                <span>{item.brand || "KTM"} · {item.category?.name}</span>
+                <span>
+                  {item.brand || "KTM"}{item.model ? ` ${item.model}` : ""} · {item.category?.name}
+                </span>
 
                 <h3>{item.name}</h3>
 
