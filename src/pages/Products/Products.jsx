@@ -11,6 +11,42 @@ import { BIKE_BRANDS } from "../../constants/bikes";
 
 const BRAND_FILTER_OPTIONS = ["All", "KTM", "Royal Enfield", "Yamaha", "Benelli"];
 
+// The DB keeps precise categories (useful for admin's own inventory
+// accuracy) — this just groups them into a handful of broad buckets for
+// browsing, so customers see ~6 options instead of 20+. A category not
+// listed anywhere below falls back to showing under its own name.
+const CATEGORY_GROUPS = {
+  "Engine & Performance": [
+    "Engine Internals", "Chain & Sprockets", "Oil Filters", "Air Filters",
+    "Fuel Pumps", "Spark Plugs", "Clutch Plates", "Exhaust Systems",
+    "Radiator & Cooling", "Batteries",
+  ],
+  "Brakes & Suspension": [
+    "Brake Pads", "Brake Discs & Rotors", "Suspension & Fork Parts",
+  ],
+  "Body & Fairings": [
+    "Body Panels & Fairings", "Windscreen & Structure",
+    "Number Plate & Tail Tidy", "Seat & Comfort",
+    "Crash Guards & Frame Sliders",
+  ],
+  "Electricals & Instruments": [
+    "Lighting & Bulbs", "Electricals & Ignition",
+    "Instrument Cluster & Meter", "Cables & Wiring",
+  ],
+  "Cockpit & Controls": [
+    "Handlebar Grips & Levers", "Mirrors", "Foot Pegs & Rearsets",
+    "Locks & Keys",
+  ],
+  "Riding Gear": ["Helmets", "Riding Gear"],
+};
+
+function getCategoryGroup(categoryName) {
+  for (const [group, members] of Object.entries(CATEGORY_GROUPS)) {
+    if (members.includes(categoryName)) return group;
+  }
+  return categoryName;
+}
+
 function Products() {
 
   const [products, setProducts] = useState([]);
@@ -79,22 +115,22 @@ function Products() {
 
   const categoryFilterOptions = ["All"];
   productsForModel.forEach((item) => {
-    const name = item.category?.name;
-    if (name && !categoryFilterOptions.includes(name)) {
-      categoryFilterOptions.push(name);
+    const label = getCategoryGroup(item.category?.name);
+    if (label && !categoryFilterOptions.includes(label)) {
+      categoryFilterOptions.push(label);
     }
   });
 
   const categoryCounts = { All: productsForModel.length };
   productsForModel.forEach((item) => {
-    const name = item.category?.name;
-    if (name) categoryCounts[name] = (categoryCounts[name] || 0) + 1;
+    const label = getCategoryGroup(item.category?.name);
+    if (label) categoryCounts[label] = (categoryCounts[label] || 0) + 1;
   });
 
   const filteredProducts = productsForModel.filter((item) => {
 
     const matchesCategory =
-      category === "All" || item.category?.name === category;
+      category === "All" || getCategoryGroup(item.category?.name) === category;
 
     const matchesSearch =
       (item.name || "")
