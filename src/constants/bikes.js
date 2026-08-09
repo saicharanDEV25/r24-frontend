@@ -29,6 +29,10 @@ export const BIKE_BRANDS = [
     brand: "Benelli",
     models: ["TRK 502", "Leoncino 500", "Imperiale 400"],
   },
+  {
+    brand: "Kawasaki",
+    models: ["Z900"],
+  },
 ];
 
 export const KTM_BIKES = BIKE_BRANDS.find((b) => b.brand === "KTM").models;

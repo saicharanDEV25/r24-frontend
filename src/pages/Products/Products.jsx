@@ -9,7 +9,7 @@ import Navbar from "../../components/Layout/Navbar/Navbar";
 import Footer from "../../components/Layout/Footer/Footer";
 import { BIKE_BRANDS } from "../../constants/bikes";
 
-const BRAND_FILTER_OPTIONS = ["All", "KTM", "Royal Enfield", "Yamaha", "Benelli"];
+const BRAND_FILTER_OPTIONS = ["All", "KTM", "Royal Enfield", "Yamaha", "Benelli", "Kawasaki"];
 
 // The DB keeps precise categories (useful for admin's own inventory
 // accuracy) — this just groups them into a handful of broad buckets for
@@ -169,9 +169,11 @@ function Products() {
     const models = label === "All"
       ? []
       : BIKE_BRANDS.find((b) => b.brand === label)?.models || [];
-    // Single-model brand (Royal Enfield): jump straight to that model.
-    // Multi-model brand: reset to "All" and let the model row narrow it.
-    setModel(models.length === 1 ? models[0] : "All");
+    // Always land on one concrete model (never a blended "every model of
+    // this brand" view) — single-model brands have only one choice anyway,
+    // multi-model brands default to the first one and the model row lets
+    // the customer switch between the rest.
+    setModel(models.length > 0 ? models[0] : "All");
   };
 
   // Same "no model = fits every model" rule as productsForModel above, so
@@ -277,7 +279,7 @@ function Products() {
         {showModelRow && (
           <div className="category-buttons">
 
-            {["All", ...brandModels].map((label) => (
+            {brandModels.map((label) => (
 
               <button
                 key={label}
@@ -296,31 +298,36 @@ function Products() {
           </div>
         )}
 
-        <div className="category-buttons">
-
-          {categoryFilterOptions.map((label) => (
-
-            <button
-              key={label}
-              className={category === label ? "active" : ""}
-              onClick={() => setCategory(label)}
-            >
-              {label}
-              <span className="category-count">{categoryCounts[label] || 0}</span>
-            </button>
-
-          ))}
-
-        </div>
-
         <div className="filter-toolbar">
 
+          <div className="category-buttons">
+
+            {categoryFilterOptions.map((label) => (
+
+              <button
+                key={label}
+                className={category === label ? "active" : ""}
+                onClick={() => setCategory(label)}
+              >
+                {label}
+                <span className="category-count">{categoryCounts[label] || 0}</span>
+              </button>
+
+            ))}
+
+          </div>
+
           <div className="availability-buttons">
-            {["All", "In Stock", "Out of Stock"].map((label) => (
+            {["In Stock", "Out of Stock"].map((label) => (
               <button
                 key={label}
                 className={availability === label ? "active" : ""}
-                onClick={() => setAvailability(label)}
+                // Clicking the already-active one turns the filter back
+                // off (shows everything) instead of needing a separate
+                // "All" button.
+                onClick={() =>
+                  setAvailability(availability === label ? "All" : label)
+                }
               >
                 {label}
               </button>
