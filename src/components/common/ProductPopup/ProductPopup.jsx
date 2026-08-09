@@ -36,16 +36,6 @@ function ProductPopup({ product, isFavorite, onToggleFavorite, onClose }) {
         <div className="popup-content">
           <span className="popup-category">{product.category?.name}</span>
 
-          <span
-            className={
-              product.stock > 0
-                ? "stock-badge in-stock popup-stock-badge"
-                : "stock-badge out-of-stock popup-stock-badge"
-            }
-          >
-            {product.stock > 0 ? "In Stock" : "Out of Stock"}
-          </span>
-
           <h2>{product.name}</h2>
 
           <p>{product.description}</p>

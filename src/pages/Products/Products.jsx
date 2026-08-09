@@ -11,42 +11,6 @@ import { BIKE_BRANDS } from "../../constants/bikes";
 
 const BRAND_FILTER_OPTIONS = ["All", "KTM", "Royal Enfield", "Yamaha", "Benelli", "Kawasaki"];
 
-// The DB keeps precise categories (useful for admin's own inventory
-// accuracy) — this just groups them into a handful of broad buckets for
-// browsing, so customers see ~6 options instead of 20+. A category not
-// listed anywhere below falls back to showing under its own name.
-const CATEGORY_GROUPS = {
-  "Engine & Performance": [
-    "Engine Internals", "Chain & Sprockets", "Oil Filters", "Air Filters",
-    "Fuel Pumps", "Spark Plugs", "Clutch Plates", "Exhaust Systems",
-    "Radiator & Cooling", "Batteries",
-  ],
-  "Brakes & Suspension": [
-    "Brake Pads", "Brake Discs & Rotors", "Suspension & Fork Parts",
-  ],
-  "Body & Fairings": [
-    "Body Panels & Fairings", "Windscreen & Structure",
-    "Number Plate & Tail Tidy", "Seat & Comfort",
-    "Crash Guards & Frame Sliders",
-  ],
-  "Electricals & Instruments": [
-    "Lighting & Bulbs", "Electricals & Ignition",
-    "Instrument Cluster & Meter", "Cables & Wiring",
-  ],
-  "Cockpit & Controls": [
-    "Handlebar Grips & Levers", "Mirrors", "Foot Pegs & Rearsets",
-    "Locks & Keys",
-  ],
-  "Riding Gear": ["Helmets", "Riding Gear"],
-};
-
-function getCategoryGroup(categoryName) {
-  for (const [group, members] of Object.entries(CATEGORY_GROUPS)) {
-    if (members.includes(categoryName)) return group;
-  }
-  return categoryName;
-}
-
 function Products() {
 
   const [products, setProducts] = useState([]);
@@ -56,8 +20,6 @@ function Products() {
   const [searchFocused, setSearchFocused] = useState(false);
   const [brand, setBrand] = useState("All");
   const [model, setModel] = useState("All");
-  const [category, setCategory] = useState("All");
-  const [availability, setAvailability] = useState("All");
 
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -103,44 +65,16 @@ function Products() {
   // brand row, with no indication of which bike it's for.
   const showModelRow = brandModels.length > 0;
 
-  // A product with no model set isn't "unknown" — it fits every model of
-  // that brand (most of the current KTM catalog is generic like this), so
-  // it should still show up no matter which specific model is selected.
+  // Strict match only — a product with no model set means fitment isn't
+  // confirmed yet, not that it fits everything, so it shouldn't show up
+  // under a specific model until it's actually tagged.
   const productsForModel = productsForBrand.filter(
-    (item) => model === "All" || !item.model || item.model === model
+    (item) => model === "All" || item.model === model
   );
 
-  const categoryFilterOptions = ["All"];
-  productsForModel.forEach((item) => {
-    const label = getCategoryGroup(item.category?.name);
-    if (label && !categoryFilterOptions.includes(label)) {
-      categoryFilterOptions.push(label);
-    }
-  });
-
-  const categoryCounts = { All: productsForModel.length };
-  productsForModel.forEach((item) => {
-    const label = getCategoryGroup(item.category?.name);
-    if (label) categoryCounts[label] = (categoryCounts[label] || 0) + 1;
-  });
-
-  const filteredProducts = productsForModel.filter((item) => {
-
-    const matchesCategory =
-      category === "All" || getCategoryGroup(item.category?.name) === category;
-
-    const matchesSearch =
-      (item.name || "")
-        .toLowerCase()
-        .includes(search.toLowerCase());
-
-    const matchesAvailability =
-      availability === "All" ||
-      (availability === "In Stock" ? item.stock > 0 : item.stock <= 0);
-
-    return matchesCategory && matchesSearch && matchesAvailability;
-
-  });
+  const filteredProducts = productsForModel.filter((item) =>
+    (item.name || "").toLowerCase().includes(search.toLowerCase())
+  );
 
   // Live dropdown searches the whole catalog (not just the currently
   // selected brand/category), same as the reference site — picking a
@@ -150,7 +84,7 @@ function Products() {
   const searchMatches = searchTerm
     ? products
         .filter((item) => (item.name || "").toLowerCase().includes(searchTerm))
-        .slice(0, 8)
+        .slice(0, 20)
     : [];
   const showSearchDropdown = searchFocused && searchTerm.length > 0;
 
@@ -162,7 +96,6 @@ function Products() {
 
   const selectBrand = (label) => {
     setBrand(label);
-    setCategory("All");
     const models = label === "All"
       ? []
       : BIKE_BRANDS.find((b) => b.brand === label)?.models || [];
@@ -173,12 +106,12 @@ function Products() {
     setModel(models.length > 0 ? models[0] : "All");
   };
 
-  // Same "no model = fits every model" rule as productsForModel above, so
-  // the count shown on each model button matches what clicking it reveals.
+  // Same strict-match rule as productsForModel above, so the count shown
+  // on each model button matches what clicking it reveals.
   const modelCounts = { All: productsForBrand.length };
   brandModels.forEach((m) => {
     modelCounts[m] = productsForBrand.filter(
-      (item) => !item.model || item.model === m
+      (item) => item.model === m
     ).length;
   });
 
@@ -237,15 +170,6 @@ function Products() {
                           {item.brand || "KTM"}{item.model ? ` ${item.model}` : ""} · {item.category?.name}
                         </span>
                       </span>
-                      <span
-                        className={
-                          item.stock > 0
-                            ? "search-dropdown-stock in-stock"
-                            : "search-dropdown-stock out-of-stock"
-                        }
-                      >
-                        {item.stock > 0 ? "In Stock" : "Out of Stock"}
-                      </span>
                     </button>
                   ))
                 )}
@@ -281,10 +205,7 @@ function Products() {
               <button
                 key={label}
                 className={model === label ? "active" : ""}
-                onClick={() => {
-                  setModel(label);
-                  setCategory("All");
-                }}
+                onClick={() => setModel(label)}
               >
                 {label}
                 <span className="category-count">{modelCounts[label] || 0}</span>
@@ -294,44 +215,6 @@ function Products() {
 
           </div>
         )}
-
-        <div className="filter-toolbar">
-
-          <div className="category-buttons">
-
-            {categoryFilterOptions.map((label) => (
-
-              <button
-                key={label}
-                className={category === label ? "active" : ""}
-                onClick={() => setCategory(label)}
-              >
-                {label}
-                <span className="category-count">{categoryCounts[label] || 0}</span>
-              </button>
-
-            ))}
-
-          </div>
-
-          <div className="availability-buttons">
-            {["In Stock", "Out of Stock"].map((label) => (
-              <button
-                key={label}
-                className={availability === label ? "active" : ""}
-                // Clicking the already-active one turns the filter back
-                // off (shows everything) instead of needing a separate
-                // "All" button.
-                onClick={() =>
-                  setAvailability(availability === label ? "All" : label)
-                }
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-
-        </div>
 
         <div className="products-grid">
 
@@ -361,16 +244,6 @@ function Products() {
                   alt={item.name}
                   fallbackSrc="https://placehold.co/400x400?text=No+Image"
                 />
-
-                <span
-                  className={
-                    item.stock > 0
-                      ? "stock-badge in-stock"
-                      : "stock-badge out-of-stock"
-                  }
-                >
-                  {item.stock > 0 ? "In Stock" : "Out of Stock"}
-                </span>
 
                 <button
                   className="favorite-btn"
