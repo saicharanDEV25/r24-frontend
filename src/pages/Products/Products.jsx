@@ -65,8 +65,11 @@ function Products() {
       : BIKE_BRANDS.find((b) => b.brand === brand)?.models || [];
   const showModelRow = brandModels.length > 1;
 
+  // A product with no model set isn't "unknown" — it fits every model of
+  // that brand (most of the current KTM catalog is generic like this), so
+  // it should still show up no matter which specific model is selected.
   const productsForModel = productsForBrand.filter(
-    (item) => model === "All" || item.model === model
+    (item) => model === "All" || !item.model || item.model === model
   );
 
   const categoryFilterOptions = ["All"];
@@ -130,9 +133,13 @@ function Products() {
     setModel(models.length === 1 ? models[0] : "All");
   };
 
+  // Same "no model = fits every model" rule as productsForModel above, so
+  // the count shown on each model button matches what clicking it reveals.
   const modelCounts = { All: productsForBrand.length };
-  productsForBrand.forEach((item) => {
-    if (item.model) modelCounts[item.model] = (modelCounts[item.model] || 0) + 1;
+  brandModels.forEach((m) => {
+    modelCounts[m] = productsForBrand.filter(
+      (item) => !item.model || item.model === m
+    ).length;
   });
 
   return (
