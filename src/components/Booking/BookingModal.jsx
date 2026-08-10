@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FaTimes, FaCalendarCheck } from "react-icons/fa";
+import "../../pages/Products/Product.css";
 import "./BookingModal.css";
 import api from "../../services/api";
 import { REAL_BIKE_BRANDS } from "../../constants/bikes";
@@ -170,16 +171,12 @@ function BookingModal({ serviceType, onClose }) {
                 <div className="booking-bike-picker">
                   <p className="booking-bike-label">Select Your Bike</p>
 
-                  <div className="booking-bike-select-grid">
+                  <div className="category-buttons">
                     {REAL_BIKE_BRANDS.map((b) => (
                       <button
                         type="button"
                         key={b.brand}
-                        className={
-                          bikeBrand === b.brand
-                            ? "booking-bike-card active"
-                            : "booking-bike-card"
-                        }
+                        className={bikeBrand === b.brand ? "active" : ""}
                         onClick={() => selectBikeBrand(b.brand)}
                       >
                         {b.brand}
@@ -188,12 +185,11 @@ function BookingModal({ serviceType, onClose }) {
                   </div>
 
                   {bikeBrand && (
-                    <div className="booking-bike-select-grid">
+                    <div className="category-buttons">
                       {brandModels.map((m) => (
                         <button
                           type="button"
                           key={m}
-                          className="booking-bike-card"
                           onClick={() => setBikeModel(m)}
                         >
                           {m}

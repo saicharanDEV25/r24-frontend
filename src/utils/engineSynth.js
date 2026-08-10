@@ -1,5 +1,8 @@
 const CYLINDER_PARAMS = {
-  single: { carrierFreq: 70, subFreq: 35, pulseHz: 9, jitter: 6 },
+  duke: { carrierFreq: 70, subFreq: 35, pulseHz: 9, jitter: 6 },
+  // RC shares the Duke's single-cylinder engine but is tuned sportier —
+  // a bit higher-revving and less lumpy than the naked Duke.
+  rc: { carrierFreq: 80, subFreq: 40, pulseHz: 12, jitter: 5 },
   // Z900's inline-four: higher-pitched and faster-firing than a thumpy
   // single, with tighter jitter for that smoother, more mechanical
   // Japanese-four character.
@@ -9,7 +12,6 @@ const CYLINDER_PARAMS = {
 const EXHAUST_PARAMS = {
   stock: { cutoff: 900, drive: 6, noiseLevel: 0.025, crackle: 0.03, gain: 0.32 },
   akrapovic: { cutoff: 2600, drive: 22, noiseLevel: 0.06, crackle: 0.12, gain: 0.42 },
-  race: { cutoff: 5200, drive: 45, noiseLevel: 0.1, crackle: 0.28, gain: 0.5 },
   z900exhaust: { cutoff: 3400, drive: 30, noiseLevel: 0.08, crackle: 0.18, gain: 0.46 },
 };
 
@@ -210,9 +212,10 @@ export class EngineSynth {
     this.nodes = { carrier, sub, pulse, jitterLfo, noise, crackleSource, revGain };
     this.baseFreqs = { carrierFreq, subFreq, pulseHz };
 
-    // Stock exhaust just idles — the full rev/gear-shift cycle is reserved
-    // for the Race exhaust so it actually sounds different from Stock.
-    if (exhaust === "race") {
+    // Z900 Exhaust is the only exhaust that still reaches the synth (Stock
+    // and Akrapovič both play real recordings now) — give it the full
+    // rev/gear-shift cycle so it's not just a louder idle.
+    if (exhaust === "z900exhaust") {
       this.scheduleGearLoop();
     }
   }

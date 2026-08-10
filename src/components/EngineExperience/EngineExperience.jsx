@@ -6,38 +6,42 @@ import ScrollReveal from "../common/ScrollReveal/ScrollReveal";
 import "./EngineExperience.css";
 
 const CYLINDER_OPTIONS = [
-  { value: "single", label: "Single Cylinder" },
+  { value: "duke", label: "DUKE" },
+  { value: "rc", label: "RC" },
   { value: "z900", label: "Z900" },
 ];
 
 const EXHAUST_OPTIONS = [
   { value: "stock", label: "Stock Exhaust" },
   { value: "akrapovic", label: "Akrapovič Slip-on" },
-  { value: "race", label: "Full Race Exhaust" },
   { value: "z900exhaust", label: "Z900 Exhaust" },
 ];
 
 const BAR_COUNT = 24;
 
-// Two combinations play a real recording instead of the synthesized
-// engine: Akrapovič (any cylinder) and the Single Cylinder's actual
-// stock-exhaust recording. Everything else is synthesized.
-function getRealPlayer(cylinder, exhaust, akrapovicPlayer, stockPlayer) {
+// Four combinations play a real recording instead of the synthesized
+// engine: Akrapovič (any cylinder), and each of DUKE/RC/Z900's own
+// stock-exhaust recording. Everything else (Z900 Exhaust) is synthesized.
+function getRealPlayer(cylinder, exhaust, akrapovicPlayer, dukeStockPlayer, rcStockPlayer, z900StockPlayer) {
   if (exhaust === "akrapovic") return akrapovicPlayer;
-  if (cylinder === "single" && exhaust === "stock") return stockPlayer;
+  if (exhaust === "stock" && cylinder === "duke") return dukeStockPlayer;
+  if (exhaust === "stock" && cylinder === "rc") return rcStockPlayer;
+  if (exhaust === "stock" && cylinder === "z900") return z900StockPlayer;
   return null;
 }
 
 function EngineExperience() {
   const [running, setRunning] = useState(false);
-  const [cylinder, setCylinder] = useState("single");
+  const [cylinder, setCylinder] = useState("duke");
   const [exhaust, setExhaust] = useState("stock");
   const [audioBlocked, setAudioBlocked] = useState(false);
   const [levels, setLevels] = useState(new Array(BAR_COUNT).fill(4));
 
   const synthRef = useRef(null);
   const akrapovicPlayerRef = useRef(null);
-  const stockPlayerRef = useRef(null);
+  const dukeStockPlayerRef = useRef(null);
+  const rcStockPlayerRef = useRef(null);
+  const z900StockPlayerRef = useRef(null);
   const cylinderRef = useRef(cylinder);
   const exhaustRef = useRef(exhaust);
   const rafRef = useRef(null);
@@ -45,12 +49,16 @@ function EngineExperience() {
   useEffect(() => {
     synthRef.current = new EngineSynth();
     akrapovicPlayerRef.current = new EnginePlayer("/audio/engine-sound.mp3");
-    stockPlayerRef.current = new EnginePlayer("/audio/stock-exhaust.mp3");
+    dukeStockPlayerRef.current = new EnginePlayer("/audio/stock-exhaust.mp3");
+    rcStockPlayerRef.current = new EnginePlayer("/audio/rc-stock.mp3");
+    z900StockPlayerRef.current = new EnginePlayer("/audio/z900-stock.mp3");
     return () => {
       cancelAnimationFrame(rafRef.current);
       synthRef.current?.stop();
       akrapovicPlayerRef.current?.stop();
-      stockPlayerRef.current?.stop();
+      dukeStockPlayerRef.current?.stop();
+      rcStockPlayerRef.current?.stop();
+      z900StockPlayerRef.current?.stop();
     };
   }, []);
 
@@ -62,13 +70,17 @@ function EngineExperience() {
   const startCombo = async (cyl, exh) => {
     synthRef.current.stop();
     akrapovicPlayerRef.current.stop();
-    stockPlayerRef.current.stop();
+    dukeStockPlayerRef.current.stop();
+    rcStockPlayerRef.current.stop();
+    z900StockPlayerRef.current.stop();
 
     const realPlayer = getRealPlayer(
       cyl,
       exh,
       akrapovicPlayerRef.current,
-      stockPlayerRef.current
+      dukeStockPlayerRef.current,
+      rcStockPlayerRef.current,
+      z900StockPlayerRef.current
     );
 
     if (realPlayer) {
@@ -95,7 +107,9 @@ function EngineExperience() {
       cylinderRef.current,
       exhaustRef.current,
       akrapovicPlayerRef.current,
-      stockPlayerRef.current
+      dukeStockPlayerRef.current,
+      rcStockPlayerRef.current,
+      z900StockPlayerRef.current
     );
     const engine = realPlayer || synthRef.current;
     const data = engine?.getLevels();
@@ -117,7 +131,9 @@ function EngineExperience() {
         // a useEffect, which browsers won't treat as a user gesture.
         synthRef.current.unlock();
         akrapovicPlayerRef.current.unlock();
-        stockPlayerRef.current.unlock();
+        dukeStockPlayerRef.current.unlock();
+        rcStockPlayerRef.current.unlock();
+        z900StockPlayerRef.current.unlock();
 
         await startCombo(cylinder, exhaust);
         setAudioBlocked(false);
@@ -129,7 +145,9 @@ function EngineExperience() {
     } else {
       synthRef.current.stop();
       akrapovicPlayerRef.current.stop();
-      stockPlayerRef.current.stop();
+      dukeStockPlayerRef.current.stop();
+      rcStockPlayerRef.current.stop();
+      z900StockPlayerRef.current.stop();
       setRunning(false);
       cancelAnimationFrame(rafRef.current);
       setLevels(new Array(BAR_COUNT).fill(4));

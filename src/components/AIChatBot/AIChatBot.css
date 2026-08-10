@@ -560,6 +560,14 @@ input{
 
 }
 
+.menu-buttons button.active{
+
+    background:#FFD000;
+
+    box-shadow:0 12px 25px rgba(255,208,0,.30);
+
+}
+
 
 /* Product / Service Button Icon Spacing */
 

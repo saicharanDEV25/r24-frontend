@@ -3,7 +3,7 @@ import { FaRobot } from "react-icons/fa";
 import "./AIChatBot.css";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
 import api from "../../services/api";
-import { BIKE_BRANDS } from "../../constants/bikes";
+import { REAL_BIKE_BRANDS } from "../../constants/bikes";
 
 const bikeServices = [
   "Regular Maintenance",
@@ -153,13 +153,11 @@ function AIChatBot({ chatOpen, setChatOpen }) {
 
   const chooseBrand = (selectedBrand) => {
 
+    // Just reveals the model row below — same brand-then-model combo
+    // shown together, not a separate chat turn, like the Products page.
     setBrand(selectedBrand);
 
-    addUser(selectedBrand);
-
-    addBot(`Choose your ${selectedBrand} model.`);
-
-    setStep("bike");
+    setBike("");
 
   };
 
@@ -167,7 +165,7 @@ function AIChatBot({ chatOpen, setChatOpen }) {
 
     setBike(selectedBike);
 
-    addUser(selectedBike);
+    addUser(`${brand} ${selectedBike}`);
 
     addBot("Select what you're looking for.");
 
@@ -434,38 +432,31 @@ open && (
 
           <h4>Choose Your Bike Brand</h4>
 
-          {BIKE_BRANDS.map((group) => (
-            <button key={group.brand} onClick={()=>chooseBrand(group.brand)}>
+          {REAL_BIKE_BRANDS.map((group) => (
+            <button
+              key={group.brand}
+              className={brand === group.brand ? "active" : ""}
+              onClick={()=>chooseBrand(group.brand)}
+            >
               🏍 {group.brand}
             </button>
           ))}
 
-        </div>
+          {brand && (
+            <>
+              <h4>Choose Your {brand} Model</h4>
 
-        )
-
-        }
-
-        {
-
-        step==="bike" && (
-
-        <div className="menu-buttons">
-
-          <h4>Choose Your {brand} Model</h4>
-
-          {(BIKE_BRANDS.find((group) => group.brand === brand)?.models || []).map((bikeName) => (
-            <button key={bikeName} onClick={()=>chooseBike(bikeName)}>
-              🏍 {bikeName}
-            </button>
-          ))}
+              {(REAL_BIKE_BRANDS.find((group) => group.brand === brand)?.models || []).map((bikeName) => (
+                <button key={bikeName} onClick={()=>chooseBike(bikeName)}>
+                  🏍 {bikeName}
+                </button>
+              ))}
+            </>
+          )}
 
         </div>
 
-
-
         )
-
 
         }
 
