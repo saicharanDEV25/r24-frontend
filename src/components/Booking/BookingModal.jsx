@@ -244,12 +244,20 @@ function BookingModal({ serviceType, onClose }) {
                   type="date"
                   value={bookingDate}
                   onChange={(e) => setBookingDate(e.target.value)}
+                  // Clicking anywhere on the field opens the calendar
+                  // instead of requiring a precise tap on the tiny native
+                  // icon (showPicker isn't supported everywhere, hence the
+                  // optional chaining — falls back to normal focus there).
+                  onClick={(e) => e.target.showPicker?.()}
+                  readOnly
                 />
 
                 <input
                   type="time"
                   value={bookingTime}
                   onChange={(e) => setBookingTime(e.target.value)}
+                  onClick={(e) => e.target.showPicker?.()}
+                  readOnly
                 />
               </div>
 
