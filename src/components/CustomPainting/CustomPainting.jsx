@@ -1,11 +1,7 @@
 import { useState } from "react";
 import "../../pages/Products/Product.css";
 import "./CustomPainting.css";
-import { BIKE_BRANDS } from "../../constants/bikes";
-
-// Only real bike brands (not the model-less Helmets/Riding Gear/Exhaust
-// entries) — you paint a bike, not a helmet.
-const PAINTABLE_BRANDS = BIKE_BRANDS.filter((b) => b.models.length > 0);
+import { REAL_BIKE_BRANDS } from "../../constants/bikes";
 
 const presetColors = [
   { name: "KTM Orange", hex: "#FF6600" },
@@ -26,16 +22,16 @@ function CustomPainting() {
   // Always land on one concrete, real bike — same rule as the Products
   // page — so the color picker below always has something valid to
   // enquire about instead of needing a "pick your bike first" gate.
-  const [selectedBrand, setSelectedBrand] = useState(PAINTABLE_BRANDS[0].brand);
-  const [selectedBike, setSelectedBike] = useState(PAINTABLE_BRANDS[0].models[0]);
+  const [selectedBrand, setSelectedBrand] = useState(REAL_BIKE_BRANDS[0].brand);
+  const [selectedBike, setSelectedBike] = useState(REAL_BIKE_BRANDS[0].models[0]);
   const [selectedColor, setSelectedColor] = useState(presetColors[0]);
 
   const brandModels =
-    PAINTABLE_BRANDS.find((b) => b.brand === selectedBrand)?.models || [];
+    REAL_BIKE_BRANDS.find((b) => b.brand === selectedBrand)?.models || [];
 
   const selectBrand = (brand) => {
     setSelectedBrand(brand);
-    const models = PAINTABLE_BRANDS.find((b) => b.brand === brand)?.models || [];
+    const models = REAL_BIKE_BRANDS.find((b) => b.brand === brand)?.models || [];
     setSelectedBike(models[0]);
   };
 
@@ -59,7 +55,7 @@ function CustomPainting() {
       </div>
 
       <div className="category-buttons">
-        {PAINTABLE_BRANDS.map((b) => (
+        {REAL_BIKE_BRANDS.map((b) => (
           <button
             key={b.brand}
             className={selectedBrand === b.brand ? "active" : ""}

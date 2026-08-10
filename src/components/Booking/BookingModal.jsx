@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaTimes, FaCalendarCheck } from "react-icons/fa";
 import "./BookingModal.css";
 import api from "../../services/api";
-import { BIKE_BRANDS, KTM_FAMILIES } from "../../constants/bikes";
+import { REAL_BIKE_BRANDS } from "../../constants/bikes";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
 
 const isRealPhoneNumber = (value) => /^[6-9]\d{9}$/.test(value || "");
@@ -16,7 +16,6 @@ function BookingModal({ serviceType, onClose }) {
   );
   const [bikeModel, setBikeModel] = useState(customer?.bikeModel || "");
   const [bikeBrand, setBikeBrand] = useState(null);
-  const [bikeFamily, setBikeFamily] = useState(null);
   const [bookingDate, setBookingDate] = useState("");
   const [bookingTime, setBookingTime] = useState("");
   const [problemDescription, setProblemDescription] = useState("");
@@ -25,13 +24,17 @@ function BookingModal({ serviceType, onClose }) {
   const [done, setDone] = useState(false);
 
   const brandModels = bikeBrand
-    ? BIKE_BRANDS.find((b) => b.brand === bikeBrand)?.models || []
+    ? REAL_BIKE_BRANDS.find((b) => b.brand === bikeBrand)?.models || []
     : [];
+
+  const selectBikeBrand = (brand) => {
+    setBikeBrand(brand);
+    setBikeModel("");
+  };
 
   const changeBike = () => {
     setBikeModel("");
     setBikeBrand(null);
-    setBikeFamily(null);
   };
 
   const submitBooking = async (e) => {
@@ -163,79 +166,41 @@ function BookingModal({ serviceType, onClose }) {
                     Change
                   </button>
                 </div>
-              ) : !bikeBrand ? (
-                <div className="booking-bike-select-grid">
-                  <p className="booking-bike-label">Select Your Bike Brand</p>
-                  {BIKE_BRANDS.map((b) => (
-                    <button
-                      type="button"
-                      key={b.brand}
-                      className="booking-bike-card"
-                      onClick={() => setBikeBrand(b.brand)}
-                    >
-                      {b.brand}
-                    </button>
-                  ))}
-                </div>
-              ) : bikeBrand === "KTM" && !bikeFamily ? (
-                <div className="booking-bike-select-grid">
-                  <button
-                    type="button"
-                    className="booking-bike-back"
-                    onClick={() => setBikeBrand(null)}
-                  >
-                    ← Back to brands
-                  </button>
-                  {KTM_FAMILIES.map((f) => (
-                    <button
-                      type="button"
-                      key={f.family}
-                      className="booking-bike-card"
-                      onClick={() => setBikeFamily(f)}
-                    >
-                      {f.family}
-                    </button>
-                  ))}
-                </div>
-              ) : bikeBrand === "KTM" && bikeFamily ? (
-                <div className="booking-bike-select-grid">
-                  <button
-                    type="button"
-                    className="booking-bike-back"
-                    onClick={() => setBikeFamily(null)}
-                  >
-                    ← Back to models
-                  </button>
-                  {bikeFamily.variants.map((v) => (
-                    <button
-                      type="button"
-                      key={v.model}
-                      className="booking-bike-card"
-                      onClick={() => setBikeModel(v.model)}
-                    >
-                      {v.cc} cc
-                    </button>
-                  ))}
-                </div>
               ) : (
-                <div className="booking-bike-select-grid">
-                  <button
-                    type="button"
-                    className="booking-bike-back"
-                    onClick={() => setBikeBrand(null)}
-                  >
-                    ← Back to brands
-                  </button>
-                  {brandModels.map((m) => (
-                    <button
-                      type="button"
-                      key={m}
-                      className="booking-bike-card"
-                      onClick={() => setBikeModel(m)}
-                    >
-                      {m}
-                    </button>
-                  ))}
+                <div className="booking-bike-picker">
+                  <p className="booking-bike-label">Select Your Bike</p>
+
+                  <div className="booking-bike-select-grid">
+                    {REAL_BIKE_BRANDS.map((b) => (
+                      <button
+                        type="button"
+                        key={b.brand}
+                        className={
+                          bikeBrand === b.brand
+                            ? "booking-bike-card active"
+                            : "booking-bike-card"
+                        }
+                        onClick={() => selectBikeBrand(b.brand)}
+                      >
+                        {b.brand}
+                      </button>
+                    ))}
+                  </div>
+
+                  {bikeBrand && (
+                    <div className="booking-bike-select-grid">
+                      {brandModels.map((m) => (
+                        <button
+                          type="button"
+                          key={m}
+                          className="booking-bike-card"
+                          onClick={() => setBikeModel(m)}
+                        >
+                          {m}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -246,10 +211,10 @@ function BookingModal({ serviceType, onClose }) {
                   onChange={(e) => setBookingDate(e.target.value)}
                   // Clicking anywhere on the field opens the calendar
                   // instead of requiring a precise tap on the tiny native
-                  // icon (showPicker isn't supported everywhere, hence the
-                  // optional chaining — falls back to normal focus there).
+                  // icon. Can't combine this with readOnly — showPicker()
+                  // throws on a non-mutable input, which would leave the
+                  // field completely dead once readonly blocks typing too.
                   onClick={(e) => e.target.showPicker?.()}
-                  readOnly
                 />
 
                 <input
@@ -257,7 +222,6 @@ function BookingModal({ serviceType, onClose }) {
                   value={bookingTime}
                   onChange={(e) => setBookingTime(e.target.value)}
                   onClick={(e) => e.target.showPicker?.()}
-                  readOnly
                 />
               </div>
 

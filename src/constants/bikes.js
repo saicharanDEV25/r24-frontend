@@ -55,6 +55,11 @@ export const BRAND_FILTER_OPTIONS = [
   "Helmets", "Riding Gear", "Exhaust",
 ];
 
+// Real bike brands only — excludes the model-less Helmets/Riding Gear/
+// Exhaust entries, for flows where you're picking an actual bike (custom
+// painting, service booking) rather than browsing the catalog.
+export const REAL_BIKE_BRANDS = BIKE_BRANDS.filter((b) => b.models.length > 0);
+
 export const KTM_BIKES = BIKE_BRANDS.find((b) => b.brand === "KTM").models;
 
 // KTM lineup grouped for a two-step "pick the model, then the CC" picker.
