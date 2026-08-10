@@ -19,6 +19,15 @@ const EXHAUST_OPTIONS = [
 
 const BAR_COUNT = 24;
 
+// Two combinations play a real recording instead of the synthesized
+// engine: Akrapovič (any cylinder) and the Single Cylinder's actual
+// stock-exhaust recording. Everything else is synthesized.
+function getRealPlayer(cylinder, exhaust, akrapovicPlayer, stockPlayer) {
+  if (exhaust === "akrapovic") return akrapovicPlayer;
+  if (cylinder === "single" && exhaust === "stock") return stockPlayer;
+  return null;
+}
+
 function EngineExperience() {
   const [running, setRunning] = useState(false);
   const [cylinder, setCylinder] = useState("single");
@@ -27,50 +36,68 @@ function EngineExperience() {
   const [levels, setLevels] = useState(new Array(BAR_COUNT).fill(4));
 
   const synthRef = useRef(null);
-  const playerRef = useRef(null);
+  const akrapovicPlayerRef = useRef(null);
+  const stockPlayerRef = useRef(null);
+  const cylinderRef = useRef(cylinder);
   const exhaustRef = useRef(exhaust);
   const rafRef = useRef(null);
 
   useEffect(() => {
     synthRef.current = new EngineSynth();
-    playerRef.current = new EnginePlayer("/audio/engine-sound.mp3");
+    akrapovicPlayerRef.current = new EnginePlayer("/audio/engine-sound.mp3");
+    stockPlayerRef.current = new EnginePlayer("/audio/stock-exhaust.mp3");
     return () => {
       cancelAnimationFrame(rafRef.current);
       synthRef.current?.stop();
-      playerRef.current?.stop();
+      akrapovicPlayerRef.current?.stop();
+      stockPlayerRef.current?.stop();
     };
   }, []);
 
   useEffect(() => {
+    cylinderRef.current = cylinder;
     exhaustRef.current = exhaust;
+  }, [cylinder, exhaust]);
+
+  const startCombo = async (cyl, exh) => {
+    synthRef.current.stop();
+    akrapovicPlayerRef.current.stop();
+    stockPlayerRef.current.stop();
+
+    const realPlayer = getRealPlayer(
+      cyl,
+      exh,
+      akrapovicPlayerRef.current,
+      stockPlayerRef.current
+    );
+
+    if (realPlayer) {
+      await realPlayer.start();
+    } else {
+      synthRef.current.start(cyl, exh);
+    }
+  };
+
+  useEffect(() => {
+    if (!running) return;
+    startCombo(cylinder, exhaust).catch(() => setAudioBlocked(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exhaust]);
 
   useEffect(() => {
     if (!running) return;
-
-    synthRef.current.stop();
-    playerRef.current.stop();
-
-    if (exhaust === "akrapovic") {
-      playerRef.current.start().catch(() => setAudioBlocked(true));
-    } else {
-      synthRef.current.start(cylinder, exhaust);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [exhaust]);
-
-  useEffect(() => {
-    // Cylinder only affects the synthesized engine — switching it while
-    // Akrapovič (real audio) is playing shouldn't restart that recording.
-    if (!running || exhaust === "akrapovic") return;
-
-    synthRef.current.start(cylinder, exhaust);
+    startCombo(cylinder, exhaust).catch(() => setAudioBlocked(true));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cylinder]);
 
   const animate = () => {
-    const engine =
-      exhaustRef.current === "akrapovic" ? playerRef.current : synthRef.current;
+    const realPlayer = getRealPlayer(
+      cylinderRef.current,
+      exhaustRef.current,
+      akrapovicPlayerRef.current,
+      stockPlayerRef.current
+    );
+    const engine = realPlayer || synthRef.current;
     const data = engine?.getLevels();
     if (data) {
       const step = Math.floor(data.length / BAR_COUNT) || 1;
@@ -85,17 +112,14 @@ function EngineExperience() {
   const toggleEngine = async () => {
     if (!running) {
       try {
-        // Unlock both engines' AudioContexts here, inside the click — a
-        // later switch to whichever exhaust isn't playing yet happens from
+        // Unlock every engine's AudioContext here, inside the click — a
+        // later switch to whichever combo isn't playing yet happens from
         // a useEffect, which browsers won't treat as a user gesture.
         synthRef.current.unlock();
-        playerRef.current.unlock();
+        akrapovicPlayerRef.current.unlock();
+        stockPlayerRef.current.unlock();
 
-        if (exhaust === "akrapovic") {
-          await playerRef.current.start();
-        } else {
-          synthRef.current.start(cylinder, exhaust);
-        }
+        await startCombo(cylinder, exhaust);
         setAudioBlocked(false);
         setRunning(true);
         rafRef.current = requestAnimationFrame(animate);
@@ -104,7 +128,8 @@ function EngineExperience() {
       }
     } else {
       synthRef.current.stop();
-      playerRef.current.stop();
+      akrapovicPlayerRef.current.stop();
+      stockPlayerRef.current.stop();
       setRunning(false);
       cancelAnimationFrame(rafRef.current);
       setLevels(new Array(BAR_COUNT).fill(4));

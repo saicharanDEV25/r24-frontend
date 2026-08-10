@@ -1,9 +1,8 @@
 import { useState } from "react";
 import "./TyresWheels.css";
-import { BIKE_BRANDS, KTM_FAMILIES } from "../../constants/bikes";
+import { REAL_BIKE_BRANDS } from "../../constants/bikes";
 
-const brandNames = BIKE_BRANDS.map((b) => b.brand);
-const familyNames = KTM_FAMILIES.map((f) => f.family);
+const brandNames = REAL_BIKE_BRANDS.map((b) => b.brand);
 
 const conditions = [
   { id: "new", label: "Brand New (First Hand)" },
@@ -58,18 +57,16 @@ function OptionGroup({ step, title, options, selected, onSelect }) {
 
 function TyresWheels() {
   const [brand, setBrand] = useState(null);
-  const [family, setFamily] = useState(null);
   const [bike, setBike] = useState(null);
   const [condition, setCondition] = useState(null);
   const [tyreType, setTyreType] = useState(null);
   const [position, setPosition] = useState(null);
   const [installation, setInstallation] = useState(null);
 
-  const isKtm = brand === "KTM";
   const brandModels = brand
-    ? BIKE_BRANDS.find((b) => b.brand === brand)?.models || []
+    ? REAL_BIKE_BRANDS.find((b) => b.brand === brand)?.models || []
     : [];
-  const bikeStepSlots = isKtm ? 3 : 2;
+  const bikeStepSlots = 2;
 
   const isComplete =
     bike && condition && tyreType && position && installation;
@@ -97,37 +94,11 @@ function TyresWheels() {
           selected={brand}
           onSelect={(b) => {
             setBrand(b);
-            setFamily(null);
             setBike(null);
           }}
         />
 
-        {brand && isKtm && (
-          <OptionGroup
-            step="2"
-            title="Select Your Model"
-            options={familyNames}
-            selected={family}
-            onSelect={(f) => {
-              setFamily(f);
-              setBike(null);
-            }}
-          />
-        )}
-
-        {brand && isKtm && family && (
-          <OptionGroup
-            step="3"
-            title="Select CC"
-            options={KTM_FAMILIES.find((f) => f.family === family).variants.map(
-              (v) => ({ id: v.model, label: `${v.cc} cc` })
-            )}
-            selected={bike ? { id: bike } : null}
-            onSelect={(opt) => setBike(opt.id ?? opt)}
-          />
-        )}
-
-        {brand && !isKtm && (
+        {brand && (
           <OptionGroup
             step="2"
             title="Select Your Model"
