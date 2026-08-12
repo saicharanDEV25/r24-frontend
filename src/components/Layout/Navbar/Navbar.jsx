@@ -51,7 +51,12 @@ function Navbar() {
             to="/"
             replace
             className="logo"
-            onClick={() => setMenuOpen(false)}
+            onClick={() => {
+              setMenuOpen(false);
+              // Router only scrolls to top on a pathname change — if we're
+              // already on "/" (just scrolled down the page), force it too.
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
           >
             R24 <span>Automotive</span>
           </Link>
