@@ -4,6 +4,7 @@ import api from "../../services/api";
 import "./Product.css";
 import OptimizedImage from "../../components/common/OptimizedImage/OptimizedImage";
 import ProductPopup from "../../components/common/ProductPopup/ProductPopup";
+import Seo from "../../components/common/Seo/Seo";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
 import Navbar from "../../components/Layout/Navbar/Navbar";
 import Footer from "../../components/Layout/Footer/Footer";
@@ -116,6 +117,12 @@ function Products() {
   return (
 
     <>
+      <Seo
+        title="Genuine Bike Spare Parts & Accessories — KTM, Royal Enfield, Kawasaki Z900"
+        description="Shop genuine spare parts and accessories for KTM, Royal Enfield, Yamaha, Bajaj, Benelli and Kawasaki Z900 motorcycles at R24 Automotive, Warangal."
+        keywords="KTM spare parts, Royal Enfield spare parts, Kawasaki Z900 parts, bike accessories Warangal, genuine motorcycle parts"
+        path="/products"
+      />
       <Navbar />
           <section className="products-page">
 

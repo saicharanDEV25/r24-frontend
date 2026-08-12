@@ -2,6 +2,7 @@ import { FaWhatsapp, FaPhoneAlt } from "react-icons/fa";
 import Navbar from "../../components/Layout/Navbar/Navbar";
 import Footer from "../../components/Layout/Footer/Footer";
 import AIBikeAdvisor from "../../components/AIBikeAdvisor/AIBikeAdvisor";
+import Seo from "../../components/common/Seo/Seo";
 import "./HelpPage.css";
 
 function HelpPage() {
@@ -11,6 +12,12 @@ function HelpPage() {
 
   return (
     <>
+      <Seo
+        title="Help & FAQs"
+        description="Frequently asked questions about R24 Automotive's bike servicing, spare parts, detailing and customization in Warangal, plus quick WhatsApp and call support."
+        keywords="R24 Automotive help, bike service FAQ Warangal, contact bike shop Warangal"
+        path="/help"
+      />
       <Navbar />
       <section className="help-page">
         <div className="help-heading">

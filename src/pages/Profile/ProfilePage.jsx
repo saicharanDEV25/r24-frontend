@@ -8,6 +8,7 @@ import ProductPopup from "../../components/common/ProductPopup/ProductPopup";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
 import { BIKE_BRANDS } from "../../constants/bikes";
 import api from "../../services/api";
+import Seo from "../../components/common/Seo/Seo";
 import "./ProfilePage.css";
 
 const SERVICE_INTERVAL_MONTHS = 2;
@@ -123,6 +124,7 @@ function ProfilePage() {
   if (!customer) {
     return (
       <>
+        <Seo title="My Account" description="Manage your R24 Automotive profile, favorites and booking history." path="/profile" noindex />
         <Navbar />
         <section className="profile-page">
           <div className="profile-guest">
@@ -137,6 +139,7 @@ function ProfilePage() {
 
   return (
     <>
+      <Seo title="My Account" description="Manage your R24 Automotive profile, favorites and booking history." path="/profile" noindex />
       <Navbar />
       <section className="profile-page">
         <div className="profile-heading">

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import Seo from "../../components/common/Seo/Seo";
 import Navbar from "../../components/Layout/Navbar/Navbar";
 import Hero from "../../components/Hero/Hero";
 import EngineExperience from "../../components/EngineExperience/EngineExperience";
@@ -29,6 +30,12 @@ function Home() {
 
   return (
 <>
+  <Seo
+    title="KTM, Royal Enfield & Kawasaki Bike Service, Detailing & Spare Parts in Warangal"
+    description="R24 Automotive, Vardhannapeta, Warangal — genuine spare parts, accessories, bike servicing, ceramic & Teflon coating, custom painting and wrapping for KTM, Royal Enfield, Yamaha, Bajaj, Benelli and Kawasaki motorcycles."
+    keywords="R24 Automotive, KTM service Warangal, Royal Enfield service Warangal, Kawasaki Z900 service, bike detailing Warangal, ceramic coating bike, Teflon coating bike, bike wrapping Warangal, genuine bike spare parts, KTM accessories Warangal"
+    path="/"
+  />
   <Navbar />
   <Hero />
   <EngineExperience />

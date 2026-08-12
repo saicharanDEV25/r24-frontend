@@ -42,7 +42,7 @@ function ProductPopup({ product, isFavorite, onToggleFavorite, onClose }) {
 
           <ul className="popup-features">
             <li>✔ Premium Quality Product</li>
-            <li>✔ Genuine KTM Compatible</li>
+            <li>✔ Genuine {product.brand ? `${product.brand} Compatible` : "Compatible Part"}</li>
             <li>✔ Professional Installation Available</li>
             <li>✔ Warranty Support Available</li>
           </ul>
