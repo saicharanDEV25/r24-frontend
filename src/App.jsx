@@ -3,7 +3,6 @@ import AppRoutes from "./routes/AppRoutes";
 import AIChatBot from "./components/AIChatBot/AIChatBot";
 import InstagramButton from "./components/Instagram/InstagramButton";
 import WhatsAppButton from "./components/WhatsApp/WhatsAppButton";
-import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
 import { CustomerAuthProvider } from "./context/CustomerAuthContext";
 import { getOrCreateDeviceId } from "./utils/deviceId";
 import api from "./services/api";
@@ -43,8 +42,6 @@ function App() {
 
   return (
     <CustomerAuthProvider>
-      <LoadingScreen />
-
       {/* Website Pages */}
       <AppRoutes />
 
