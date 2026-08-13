@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-# TODO: swap for the real custom domain once one is purchased.
-Sitemap: https://r24-frontend.vercel.app/sitemap.xml
+Sitemap: https://r24-automotive.com/sitemap.xml

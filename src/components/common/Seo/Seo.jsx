@@ -2,8 +2,7 @@ import { useEffect } from "react";
 
 const SITE_NAME = "R24 Automotive";
 const DEFAULT_IMAGE = "/images/hero.jpg";
-// TODO: swap for the real custom domain once one is purchased (see frontend/index.html).
-const BASE_URL = "https://r24-frontend.vercel.app";
+const BASE_URL = "https://r24-automotive.com";
 
 // index.html ships static fallback tags for bots/crawlers that run before JS. React 19's
 // head-tag hoisting would create duplicate nodes instead of adopting those (no SSR to match
