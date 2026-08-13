@@ -2,12 +2,6 @@ import { useState } from "react";
 import "./OptimizedImage.css";
 import { getOptimizedImageUrl } from "../../../utils/imageUrl";
 
-/**
- * Drop-in replacement for <img>: lazy-loads, shows a shimmer skeleton
- * until the image decodes, auto-requests a compressed/webp version for
- * Cloudinary-hosted images, and falls back to a webp sibling for local
- * static images when one is available (see scripts/optimize-images.mjs).
- */
 function OptimizedImage({
   src,
   webpSrc,

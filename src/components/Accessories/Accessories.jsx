@@ -57,9 +57,7 @@ function Accessories() {
       : BIKE_BRANDS.find((b) => b.brand === brand)?.models || [];
   const showModelRow = brandModels.length > 0;
 
-  // Strict match, same rule as the Products page — a product with no
-  // model set means fitment isn't confirmed yet, so it only shows up
-  // once it's actually tagged for the selected model.
+  // strict match, same rule as Products page — untagged model means fitment isn't confirmed
   const productsForModel = productsForBrand.filter(
     (item) => model === "All" || item.model === model
   );

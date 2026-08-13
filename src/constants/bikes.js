@@ -48,16 +48,13 @@ export const BIKE_BRANDS = [
   },
 ];
 
-// Shared brand row used by both the Products page and Accessories — keeping
-// them on one list means the two pages can't drift out of sync.
+// shared between Products and Accessories so the two pages can't drift out of sync
 export const BRAND_FILTER_OPTIONS = [
   "All", "KTM", "Royal Enfield", "Yamaha", "Bajaj", "Benelli", "Kawasaki",
   "Helmets", "Riding Gear", "Exhaust",
 ];
 
-// Real bike brands only — excludes the model-less Helmets/Riding Gear/
-// Exhaust entries, for flows where you're picking an actual bike (custom
-// painting, service booking) rather than browsing the catalog.
+// excludes model-less entries (Helmets/Riding Gear/Exhaust) for flows that need an actual bike
 export const REAL_BIKE_BRANDS = BIKE_BRANDS.filter((b) => b.models.length > 0);
 
 export const KTM_BIKES = BIKE_BRANDS.find((b) => b.brand === "KTM").models;

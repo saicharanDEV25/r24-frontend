@@ -1,7 +1,5 @@
-// One-off/rerunnable script: compresses the static images shipped in
-// public/ in place (same filename, same path -> no code changes needed)
-// and writes a sibling .webp next to each for <picture> to prefer.
-// Run with: node scripts/optimize-images.mjs
+// Compresses images in public/ in place (same filename, no code changes needed) and
+// writes a sibling .webp for <picture> to prefer. Run: node scripts/optimize-images.mjs
 import { readdir, stat } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";

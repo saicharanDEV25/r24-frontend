@@ -58,15 +58,10 @@ function Products() {
     brand === "All"
       ? []
       : BIKE_BRANDS.find((b) => b.brand === brand)?.models || [];
-  // Even single-model brands (Royal Enfield, Kawasaki) show their one
-  // model as a button — otherwise the row disappears and the category
-  // row's "All" button ends up looking like the first thing under the
-  // brand row, with no indication of which bike it's for.
+  // show the model row even for single-model brands, so it's clear which bike the "All" button is for
   const showModelRow = brandModels.length > 0;
 
-  // Strict match only — a product with no model set means fitment isn't
-  // confirmed yet, not that it fits everything, so it shouldn't show up
-  // under a specific model until it's actually tagged.
+  // strict match — untagged model means fitment isn't confirmed, not that it fits everything
   const productsForModel = productsForBrand.filter(
     (item) => model === "All" || item.model === model
   );
@@ -75,10 +70,8 @@ function Products() {
     (item.name || "").toLowerCase().includes(search.toLowerCase())
   );
 
-  // Live dropdown searches the whole catalog (not just the currently
-  // selected brand/category), same as the reference site — picking a
-  // result opens it directly instead of making the user hunt for it in
-  // the grid below.
+  // dropdown searches the whole catalog, not just the selected brand/category — picking
+  // a result opens it directly instead of making the user hunt for it in the grid
   const searchTerm = search.trim().toLowerCase();
   const searchMatches = searchTerm
     ? products
@@ -98,15 +91,11 @@ function Products() {
     const models = label === "All"
       ? []
       : BIKE_BRANDS.find((b) => b.brand === label)?.models || [];
-    // Always land on one concrete model (never a blended "every model of
-    // this brand" view) — single-model brands have only one choice anyway,
-    // multi-model brands default to the first one and the model row lets
-    // the customer switch between the rest.
+    // always land on one concrete model, never a blended "every model" view
     setModel(models.length > 0 ? models[0] : "All");
   };
 
-  // Same strict-match rule as productsForModel above, so the count shown
-  // on each model button matches what clicking it reveals.
+  // same strict-match rule as productsForModel, so counts match what clicking reveals
   const modelCounts = { All: productsForBrand.length };
   brandModels.forEach((m) => {
     modelCounts[m] = productsForBrand.filter(

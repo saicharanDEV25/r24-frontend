@@ -136,10 +136,8 @@
   gap: 10px;
 }
 
-/* The Products page only switches its chip row to horizontal-scroll
-   below a 768px *viewport* — but this modal is narrow regardless of
-   viewport width, so that condition never fires here. Scope the same
-   scroll treatment to the modal directly instead of a media query. */
+/* Products page scrolls this row via a viewport media query, which never fires in this
+   narrow modal regardless of screen size — scope the scroll treatment directly instead */
 .booking-bike-picker .category-buttons {
   flex-wrap: nowrap;
   justify-content: flex-start;

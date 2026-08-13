@@ -75,9 +75,7 @@ function BookingModal({ serviceType, onClose }) {
         bookingTime,
       });
 
-      // Sync name/phone/bike to this device's profile (silently) so "My
-      // Garage" can find this booking later without ever asking for a
-      // login — the phone here is just a data field now, not a credential.
+      // silently sync to this device's profile so My Garage can find this booking, no login needed
       try {
         const res = await api.put("/customers/me", {
           name: name.trim(),
@@ -205,11 +203,8 @@ function BookingModal({ serviceType, onClose }) {
                   type="date"
                   value={bookingDate}
                   onChange={(e) => setBookingDate(e.target.value)}
-                  // Clicking anywhere on the field opens the calendar
-                  // instead of requiring a precise tap on the tiny native
-                  // icon. Can't combine this with readOnly — showPicker()
-                  // throws on a non-mutable input, which would leave the
-                  // field completely dead once readonly blocks typing too.
+                  // opens the calendar on any click, not just the tiny native icon
+                  // (can't pair with readOnly — showPicker() throws on a non-mutable input)
                   onClick={(e) => e.target.showPicker?.()}
                 />
 

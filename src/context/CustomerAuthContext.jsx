@@ -12,10 +12,8 @@ export function CustomerAuthProvider({ children }) {
 
   const [favorites, setFavorites] = useState([]);
 
-  // No login step: every device gets a stable anonymous id (see
-  // utils/deviceId), and this exchanges it for a session + Customer row on
-  // first load — creating one on the backend the first time this device is
-  // seen. Same browser next time -> same customer, favorites/garage intact.
+  // no login step — exchanges the device id (utils/deviceId) for a session + Customer row,
+  // creating one on the backend the first time this device is seen
   useEffect(() => {
     const startSession = async () => {
       try {

@@ -153,8 +153,7 @@ function AIChatBot({ chatOpen, setChatOpen }) {
 
   const chooseBrand = (selectedBrand) => {
 
-    // Just reveals the model row below — same brand-then-model combo
-    // shown together, not a separate chat turn, like the Products page.
+    // reveals the model row below, same brand-then-model pattern as the Products page
     setBrand(selectedBrand);
 
     setBike("");

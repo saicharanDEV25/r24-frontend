@@ -144,8 +144,7 @@
         box-shadow:0 20px 45px rgba(255,208,0,.18);
     }
 
-    /* Loading placeholders shown while a (possibly cold-starting) product
-       fetch is in flight, so the grid doesn't just sit blank. */
+    /* placeholders shown while a (possibly cold-starting) product fetch is in flight */
     .skeleton-card{
         cursor:default;
     }

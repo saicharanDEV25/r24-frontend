@@ -1,8 +1,6 @@
 import { motion } from "framer-motion";
 
-// Fades/slides content up as it scrolls into view — same entrance feel as
-// the Hero's load-in animation, but triggered by scroll instead of mount.
-// Animates once per element (won't re-trigger scrolling back up/down).
+// Fades/slides content up as it scrolls into view, once per element.
 function ScrollReveal({ children, delay = 0, y = 40, className }) {
   return (
     <motion.div

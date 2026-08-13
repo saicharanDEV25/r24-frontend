@@ -19,9 +19,7 @@ const presetColors = [
 ];
 
 function CustomPainting() {
-  // Always land on one concrete, real bike — same rule as the Products
-  // page — so the color picker below always has something valid to
-  // enquire about instead of needing a "pick your bike first" gate.
+  // default to a real bike (same rule as Products) so the color picker always has something to enquire about
   const [selectedBrand, setSelectedBrand] = useState(REAL_BIKE_BRANDS[0].brand);
   const [selectedBike, setSelectedBike] = useState(REAL_BIKE_BRANDS[0].models[0]);
   const [selectedColor, setSelectedColor] = useState(presetColors[0]);

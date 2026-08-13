@@ -19,9 +19,7 @@ const EXHAUST_OPTIONS = [
 
 const BAR_COUNT = 24;
 
-// Four combinations play a real recording instead of the synthesized
-// engine: Akrapovič (any cylinder), and each of DUKE/RC/Z900's own
-// stock-exhaust recording. Everything else (Z900 Exhaust) is synthesized.
+// Akrapovič and each cylinder's stock exhaust play real recordings; Z900 Exhaust is synthesized.
 function getRealPlayer(cylinder, exhaust, akrapovicPlayer, dukeStockPlayer, rcStockPlayer, z900StockPlayer) {
   if (exhaust === "akrapovic") return akrapovicPlayer;
   if (exhaust === "stock" && cylinder === "duke") return dukeStockPlayer;
@@ -126,9 +124,8 @@ function EngineExperience() {
   const toggleEngine = async () => {
     if (!running) {
       try {
-        // Unlock every engine's AudioContext here, inside the click — a
-        // later switch to whichever combo isn't playing yet happens from
-        // a useEffect, which browsers won't treat as a user gesture.
+        // unlock every engine's AudioContext here — a later switch happens from a
+        // useEffect, which browsers won't treat as a user gesture
         synthRef.current.unlock();
         akrapovicPlayerRef.current.unlock();
         dukeStockPlayerRef.current.unlock();

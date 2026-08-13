@@ -1,11 +1,8 @@
 const CYLINDER_PARAMS = {
   duke: { carrierFreq: 70, subFreq: 35, pulseHz: 9, jitter: 6 },
-  // RC shares the Duke's single-cylinder engine but is tuned sportier —
-  // a bit higher-revving and less lumpy than the naked Duke.
+  // RC: same single-cylinder engine as the Duke, tuned sportier and higher-revving
   rc: { carrierFreq: 80, subFreq: 40, pulseHz: 12, jitter: 5 },
-  // Z900's inline-four: higher-pitched and faster-firing than a thumpy
-  // single, with tighter jitter for that smoother, more mechanical
-  // Japanese-four character.
+  // Z900 inline-four: higher-pitched, faster-firing, tighter jitter for a smoother character
   z900: { carrierFreq: 105, subFreq: 52, pulseHz: 24, jitter: 2 },
 };
 
@@ -15,11 +12,9 @@ const EXHAUST_PARAMS = {
   z900exhaust: { cutoff: 3400, drive: 30, noiseLevel: 0.08, crackle: 0.18, gain: 0.46 },
 };
 
-// One full ride cycle through all 6 gears: idle -> 1st..6th gear, each
-// revving up and holding ~2s at its peak RPM before the shift cut -> engine
-// braking decel -> back to idle, then loops. "mult" scales pulse/carrier
-// pitch (RPM), "gain" scales loudness — dipping sharply at each shift for
-// the clutch-cut snap, rising as RPM climbs toward redline in each gear.
+// One full ride cycle through all 6 gears: idle -> 1st..6th, each revving up and
+// holding before the shift cut, then decel back to idle. mult scales pitch (RPM),
+// gain dips at each shift for the clutch-cut snap.
 const GEAR_CYCLE = [
   { t: 0, mult: 1, gain: 0.85 },
   { t: 1.5, mult: 1, gain: 0.85 },
@@ -86,12 +81,9 @@ export class EngineSynth {
     this.analyser.connect(this.ctx.destination);
   }
 
-  // Creates and resumes the AudioContext without building/starting any
-  // sound graph. Call this synchronously inside the click handler that
-  // starts the experience, even if this engine isn't the one about to
-  // play — browsers only allow an AudioContext to unlock inside a direct
-  // user-gesture call stack, and a later exhaust-pill switch that first
-  // touches this engine runs from a useEffect, not a click.
+  // Call synchronously from the click handler even if this engine isn't playing yet —
+  // AudioContext only unlocks inside a direct user-gesture call stack, and a later
+  // exhaust-pill switch runs from a useEffect, not a click.
   unlock() {
     this.ensureContext();
     if (this.ctx.state === "suspended") this.ctx.resume();
@@ -162,8 +154,7 @@ export class EngineSynth {
     noiseGain.gain.value = noiseLevel;
     noise.connect(noiseGain);
 
-    // Exhaust crackle/pop — noise gated by the same firing pulse,
-    // filtered brighter than the main body so it reads as a "bark"
+    // Exhaust crackle/pop — noise gated by the firing pulse, filtered brighter to read as a "bark"
     const crackleSource = ctx.createBufferSource();
     crackleSource.buffer = this.getNoiseBuffer();
     crackleSource.loop = true;
@@ -190,8 +181,7 @@ export class EngineSynth {
     const shaper = ctx.createWaveShaper();
     shaper.curve = makeDistortionCurve(drive);
 
-    // RPM-linked loudness — separate from the master fade envelope so the
-    // gear cycle can swell/dip (and snap on each shift) independently.
+    // RPM-linked loudness, separate from the master fade so the gear cycle can swell/dip on its own
     const revGain = ctx.createGain();
     revGain.gain.value = 0.85;
 
@@ -212,9 +202,8 @@ export class EngineSynth {
     this.nodes = { carrier, sub, pulse, jitterLfo, noise, crackleSource, revGain };
     this.baseFreqs = { carrierFreq, subFreq, pulseHz };
 
-    // Z900 Exhaust is the only exhaust that still reaches the synth (Stock
-    // and Akrapovič both play real recordings now) — give it the full
-    // rev/gear-shift cycle so it's not just a louder idle.
+    // Only Z900 Exhaust still uses the synth (Stock/Akrapovič play real recordings), so
+    // give it the full rev/gear-shift cycle instead of a louder idle.
     if (exhaust === "z900exhaust") {
       this.scheduleGearLoop();
     }
@@ -272,9 +261,7 @@ export class EngineSynth {
     this.ensureContext();
     if (this.ctx.state === "suspended") this.ctx.resume();
 
-    // A prior stop() may have a delayed teardown pending — left unchecked,
-    // it fires ~400ms into this new graph's life and silently kills it
-    // (exactly what happened switching exhaust types while running).
+    // cancel any pending teardown from a prior stop() — it can kill this new graph ~400ms in
     if (this.stopTimer) {
       clearTimeout(this.stopTimer);
       this.stopTimer = null;

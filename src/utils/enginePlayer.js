@@ -1,6 +1,5 @@
-// Plays a real engine-sound recording on loop, routed through an analyser
-// so the equalizer bars in EngineExperience can react to it the same way
-// they did with the synthesized engine.
+// Plays a real engine recording on loop, routed through an analyser so the
+// equalizer bars react to it the same way they do with the synthesized engine.
 export class EnginePlayer {
   constructor(src) {
     this.src = src;
@@ -25,10 +24,8 @@ export class EnginePlayer {
     this.analyser.connect(this.ctx.destination);
   }
 
-  // See EngineSynth.unlock() — primes this engine's AudioContext inside a
-  // direct user gesture even when it isn't the one about to play, so a
-  // later exhaust-pill switch (which runs from a useEffect, not a click)
-  // can still start it.
+  // See EngineSynth.unlock() — primes the AudioContext inside a direct user
+  // gesture so a later exhaust-pill switch (which runs from a useEffect) can still start it.
   unlock() {
     this.ensureGraph();
     if (this.ctx.state === "suspended") this.ctx.resume();

@@ -5,14 +5,9 @@ const DEFAULT_IMAGE = "/images/hero.jpg";
 // TODO: swap for the real custom domain once one is purchased (see frontend/index.html).
 const BASE_URL = "https://r24-frontend.vercel.app";
 
-// index.html already ships every one of these tags as the static/default
-// fallback (read by non-JS bots like WhatsApp/Facebook's link-preview
-// scrapers, and by crawlers before JS runs). React 19 can render <title>/
-// <meta>/<link> anywhere and hoist them into <head>, but since this is a
-// plain CSR app (no hydrateRoot matching SSR markup), it treats those as
-// brand-new nodes rather than adopting the static ones — every route ends
-// up with two conflicting canonical links / meta descriptions instead of
-// one correct one. Updating the existing static nodes in place avoids that.
+// index.html ships static fallback tags for bots/crawlers that run before JS. React 19's
+// head-tag hoisting would create duplicate nodes instead of adopting those (no SSR to match
+// against), so we update the existing static nodes in place instead.
 function setMeta(selector, attr, value) {
   const el = document.querySelector(selector);
   if (el) el.setAttribute(attr, value);

@@ -53,8 +53,7 @@ function Navbar() {
             className="logo"
             onClick={() => {
               setMenuOpen(false);
-              // Router only scrolls to top on a pathname change — if we're
-              // already on "/" (just scrolled down the page), force it too.
+              // router only scrolls to top on a pathname change, force it if already on "/"
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
           >

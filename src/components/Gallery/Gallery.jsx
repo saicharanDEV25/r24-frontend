@@ -26,10 +26,8 @@ function Gallery() {
     loadGallery();
   }, []);
 
-  // Auto-scrolls the marquee, pausing while the user is hovering, dragging
-  // (mouse), or actively touch-scrolling — and normalizes scrollLeft back
-  // into the first half each frame so the duplicated card list loops
-  // seamlessly whether the motion came from us or the user.
+  // auto-scrolls, pausing on hover/drag/touch; wraps scrollLeft back into the
+  // first half each frame so the duplicated card list loops seamlessly
   useEffect(() => {
     const track = scrollRef.current;
     if (!track || comparisons.length === 0) return;
@@ -82,10 +80,8 @@ function Gallery() {
 
     if (Math.abs(dx) > 5 && !didDragRef.current) {
       didDragRef.current = true;
-      // Only capture once we know this is a real drag, not a click —
-      // capturing on every mousedown makes the browser route the click
-      // event to this container instead of the card underneath, so cards
-      // stop opening on tap.
+      // capture only once we know it's a real drag, not a click — capturing on every
+      // mousedown routes the click to this container instead of the card, breaking tap-to-open
       e.currentTarget.setPointerCapture(e.pointerId);
     }
 

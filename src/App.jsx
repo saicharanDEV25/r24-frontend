@@ -7,7 +7,7 @@ import { CustomerAuthProvider } from "./context/CustomerAuthContext";
 import { getOrCreateDeviceId } from "./utils/deviceId";
 import api from "./services/api";
 
-const HEARTBEAT_INTERVAL_MS = 45 * 1000; // 45 seconds
+const HEARTBEAT_INTERVAL_MS = 45 * 1000;
 
 function App() {
 
@@ -16,8 +16,7 @@ function App() {
   useEffect(() => {
     const visitorId = getOrCreateDeviceId();
 
-    // Tracked once per tab session — surviving a background/minimize, but
-    // reset when the tab is actually closed and reopened.
+    // once per tab session — survives background/minimize, resets on tab close
     if (!sessionStorage.getItem("visitTracked")) {
       api
         .post("/analytics/visit", {
@@ -42,7 +41,6 @@ function App() {
 
   return (
     <CustomerAuthProvider>
-      {/* Website Pages */}
       <AppRoutes />
 
       <div className="floating-stack">

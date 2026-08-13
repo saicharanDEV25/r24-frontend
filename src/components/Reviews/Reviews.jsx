@@ -28,9 +28,7 @@ function Reviews() {
     loadReviews();
   }, []);
 
-  // Same auto-scroll + drag/swipe behavior as the Gallery before/after
-  // marquee — pauses on hover/drag/touch, normalizes scrollLeft each frame
-  // so the duplicated card list loops seamlessly.
+  // same auto-scroll + drag/swipe marquee behavior as Gallery's before/after track
   useEffect(() => {
     const track = scrollRef.current;
     if (!track || reviews.length === 0) return;
@@ -83,9 +81,8 @@ function Reviews() {
 
     if (Math.abs(dx) > 5 && !didDragRef.current) {
       didDragRef.current = true;
-      // Only capture once we know this is a real drag, not a click —
-      // capturing on every mousedown makes the browser route the click
-      // event to this container instead of whatever's underneath.
+      // capture only once we know it's a real drag — capturing on every mousedown
+      // routes the click to this container instead of whatever's underneath
       e.currentTarget.setPointerCapture(e.pointerId);
     }
 
