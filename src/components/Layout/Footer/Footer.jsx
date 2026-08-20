@@ -82,6 +82,21 @@ function Footer() {
         <p>
           © {new Date().getFullYear()} R24 Automotive. All Rights Reserved.
         </p>
+
+        <p className="footer-credit">
+          Website by <strong>Saicharan</strong>
+          <a
+            href={`https://wa.me/919959345608?text=${encodeURIComponent(
+              "Hi Saicharan, I saw the R24 Automotive website you built and wanted to connect."
+            )}`}
+            target="_blank"
+            rel="noreferrer"
+            className="footer-credit-whatsapp"
+            aria-label="Chat with Saicharan on WhatsApp"
+          >
+            <FaWhatsapp />
+          </a>
+        </p>
       </div>
     </footer>
   );

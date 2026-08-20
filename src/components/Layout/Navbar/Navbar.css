@@ -114,6 +114,24 @@
     transform:translateY(-2px);
 }
 
+.nav-links a.staff-login-link{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    color:#999;
+    font-size:13px;
+    font-weight:500;
+    padding:8px 14px;
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:20px;
+    white-space:nowrap;
+}
+
+.nav-links a.staff-login-link:hover{
+    color:#FFD000;
+    border-color:#FFD000;
+}
+
 .profile-menu{
     position:relative;
 }

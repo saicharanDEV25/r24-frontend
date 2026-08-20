@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FaBars, FaTimes, FaUserCircle, FaHeart, FaCalendarCheck } from "react-icons/fa";
+import { FaBars, FaTimes, FaUserCircle, FaHeart, FaCalendarCheck, FaUserShield } from "react-icons/fa";
 import "./Navbar.css";
 import { useCustomerAuth } from "../../../context/CustomerAuthContext";
 
@@ -86,6 +86,17 @@ function Navbar() {
               onClick={() => setMenuOpen(false)}
             >
               <FaCalendarCheck /> Book Service
+            </a>
+
+            <a
+              href="https://admin.r24-automotive.com"
+              target="_blank"
+              rel="noreferrer"
+              className="staff-login-link"
+              title="Staff Login"
+              onClick={() => setMenuOpen(false)}
+            >
+              <FaUserShield /> Staff Login
             </a>
 
             <div className="profile-menu" ref={profileRef}>

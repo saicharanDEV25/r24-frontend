@@ -108,6 +108,36 @@
     line-height:1.7;
 }
 
+.footer-credit{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    margin-top:10px;
+}
+
+.footer-credit strong{
+    color:#cfcfcf;
+}
+
+.footer-credit-whatsapp{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    background:#181818;
+    color:#25D366;
+    transition:.3s;
+}
+
+.footer-credit-whatsapp:hover{
+    background:#25D366;
+    color:#000;
+    transform:translateY(-2px);
+}
+
 /* ---------------- Laptop ---------------- */
 
 @media(max-width:992px){
