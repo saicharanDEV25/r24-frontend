@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 
-// Fades/slides content up as it scrolls into view, once per element.
 function ScrollReveal({ children, delay = 0, y = 40, className }) {
   return (
     <motion.div
